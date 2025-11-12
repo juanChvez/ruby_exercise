@@ -1,0 +1,27 @@
+services:
+  db:
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile.dev
+    container_name: devhub-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:

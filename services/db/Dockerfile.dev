@@ -1,0 +1,13 @@
+# Official PostgreSQL base image
+FROM postgres:15
+
+# Required environment variables
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=password
+ENV POSTGRES_DB=devhub_development
+
+# Copy the initialization scripts
+COPY ./init /docker-entrypoint-initdb.d/
+
+# Expose the default PostgreSQL port
+EXPOSE 5432
