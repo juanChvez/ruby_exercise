@@ -1,1 +1,43 @@
-# Default file
+# --- Base image ---
+FROM ruby:3.3
+
+# --- Environment variables ---
+ENV RAILS_ENV=development \
+    BUNDLE_PATH=/gems \
+    PATH="/app/bin:$PATH"
+
+# --- System dependencies ---
+RUN apt-get update -qq && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    nodejs \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Set the application directory ---
+WORKDIR /app
+
+# --- Copy Gemfile and Gemfile.lock for caching ---
+COPY Gemfile* ./
+
+# --- Install gems ---
+RUN gem install bundler && bundle install
+
+# --- Copy the rest of the project ---
+COPY . .
+
+# --- Fix line endings for bin scripts (Windows compatibility) ---
+RUN if command -v dos2unix > /dev/null; then \
+    dos2unix bin/* 2>/dev/null || true; \
+    else \
+    sed -i 's/\r$//' bin/* 2>/dev/null || true; \
+    fi
+
+# --- Expose the port ---
+ARG BACKEND_PORT=5000
+ENV BACKEND_PORT=${BACKEND_PORT}
+EXPOSE ${BACKEND_PORT}
+
+# --- Default command ---
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0 -p ${BACKEND_PORT}"]

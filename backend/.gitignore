@@ -1,0 +1,123 @@
+# ===================================
+# Rails Temporary Files
+# ===================================
+/tmp/*
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+/tmp/cache/*
+!/tmp/cache/.keep
+/tmp/sockets/*
+!/tmp/sockets/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+
+# ===================================
+# Logs
+# ===================================
+/log/*
+!/log/.keep
+*.log
+
+# ===================================
+# Storage (Active Storage)
+# ===================================
+/storage/*
+!/storage/.keep
+
+# ===================================
+# Database Files
+# ===================================
+/db/*.sqlite3
+/db/*.sqlite3-*
+/db/*.sql
+/db/*.dump
+
+# ===================================
+# Bundler
+# ===================================
+/.bundle
+/vendor/bundle
+
+# ===================================
+# Environment & Secrets
+# ===================================
+/.env*
+!/.env.example
+/config/master.key
+/config/credentials/*.key
+/config/credentials.yml.enc
+
+# ===================================
+# Public Uploads and Assets
+# ===================================
+/public/uploads
+/public/assets
+/public/packs
+/public/packs-test
+
+# ===================================
+# Node Modules (Webpacker/JS)
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+
+# ===================================
+# Test Coverage
+# ===================================
+/coverage/
+/spec/tmp
+
+# ===================================
+# RSpec / Test Files
+# ===================================
+/spec/examples.txt
+
+# ===================================
+# SimpleCov Coverage
+# ===================================
+/coverage
+
+# ===================================
+# Byebug History
+# ===================================
+.byebug_history
+
+# ===================================
+# RubyMine / IDEs
+# ===================================
+/.idea
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===================================
+# Docker files (optional)
+/.dockerignore~
+
+# ===================================
+# macOS System Files
+# ===================================
+.DS_Store
+
+# ===================================
+# Master key for decrypting credentials
+# ===================================
+/config/master.key
+
+# ===================================
+# GitHub Actions
+# ===================================
+/.github
+
+# ===================================
+# Kamal deployment
+# ===================================
+/config/deploy*.yml
+/.kamal
+
+# ===================================
+# Development Containers
+# ===================================
+/.devcontainer
