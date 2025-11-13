@@ -1,0 +1,23 @@
+# Default settings
+* text=auto
+
+# Force LF (Unix) line endings for scripts and Ruby files
+*.sh text eol=lf
+*.rb text eol=lf
+bin/* text eol=lf
+config.ru text eol=lf
+Rakefile text eol=lf
+
+# Files that should keep CRLF (Windows)
+*.bat text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
