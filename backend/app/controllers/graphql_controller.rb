@@ -11,8 +11,7 @@ class GraphqlController < ApplicationController
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user_from_token
     }
     result = AppSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -48,5 +47,27 @@ class GraphqlController < ApplicationController
     logger.error e.backtrace.join("\n")
 
     render json: {errors: [{message: e.message, backtrace: e.backtrace}], data: {}}, status: 500
+  end
+
+  def current_user_from_token
+    header = request.headers["Authorization"]
+
+    return unless header.present?
+
+    token = begin
+      header.split(" ").last
+    rescue
+      nil
+    end
+    return unless token
+
+    decoded = JwtService.decode(token)
+    return unless decoded
+
+    @current_user = User.find_by(id: decoded[:user_id])
+  rescue JWT::ExpiredSignature
+    @current_user = nil
+  rescue JWT::DecodeError
+    @current_user = nil
   end
 end

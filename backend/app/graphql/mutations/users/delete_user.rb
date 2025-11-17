@@ -2,6 +2,7 @@ module Mutations
   module Users
     class DeleteUser < BaseMutation
       description "Delete a user by ID. Returns true if the user is deleted, or a list of error messages if deletion fails."
+      include Mixins::Authorization
 
       argument :id, ID, required: true
 
@@ -9,7 +10,7 @@ module Mutations
       field :errors, [String], null: false
 
       def resolve(id:)
-        user = User.find_by(id: id)
+        user = require_authentication!(context)
 
         unless user
           return {

@@ -2,6 +2,7 @@ module Mutations
   module Users
     class UpdateUser < BaseMutation
       description "Update an existing user. Takes an ID and any fields to update. Returns the updated user object if successful, or a list of error messages if the update fails."
+      include Mixins::Authorization
 
       argument :id, ID, required: true
       argument :name, String, required: false
@@ -15,7 +16,7 @@ module Mutations
       field :errors, [String], null: false
 
       def resolve(id:, name: nil, email: nil, current_password: nil, password: nil, password_confirmation: nil)
-        user = ::User.find_by(id: id)
+        user = require_authentication!(context)
         return {user: nil, errors: ["User not found"]} unless user
 
         # Only update attributes that are provided
