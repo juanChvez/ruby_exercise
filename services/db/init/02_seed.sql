@@ -7,21 +7,22 @@
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM users WHERE email = 'alice@example.com') THEN
-    INSERT INTO users (name, email, password_digest)
+    INSERT INTO users (name, email, password_digest, level)
     VALUES
-      ('Alice', 'alice@example.com', '123456'),
-      ('Bob', 'bob@example.com', '123456');
+      ('Alice', 'alice@example.com', '123456', 'admin'),
+      ('Bob', 'bob@example.com', '123456', 'user');
   END IF;
 END$$;
 
 -- Projects
+-- Seed projects and associate each to a user (Alice: id=1, Bob: id=2)
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM projects WHERE name = 'DevHub Core') THEN
-    INSERT INTO projects (name, description)
+    INSERT INTO projects (user_id, name, description)
     VALUES
-      ('DevHub Core', 'Core logic and services'),
-      ('Admin Engine', 'Admin dashboard and reports');
+      (1, 'DevHub Core', 'Core logic and services'),
+      (2, 'Admin Engine', 'Admin dashboard and reports');
   END IF;
 END$$;
 
