@@ -64,10 +64,10 @@ class GraphqlController < ApplicationController
     decoded = JwtService.decode(token)
     return unless decoded
 
-    @current_user = User.find_by(id: decoded[:user_id])
+    User.find_by(id: decoded[:user_id])
   rescue JWT::ExpiredSignature
-    @current_user = nil
+    nil
   rescue JWT::DecodeError
-    @current_user = nil
+    nil
   end
 end

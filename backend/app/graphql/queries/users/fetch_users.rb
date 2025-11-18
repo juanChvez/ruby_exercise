@@ -11,6 +11,7 @@ module Queries
 
       def resolve(name: nil, email: nil)
         require_authentication!(context)
+        require_admin!(context)
         users = User.all
         # Filter by name if provided
         users = users.where("name ILIKE ?", "%#{name}%") if name.present?

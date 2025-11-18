@@ -3,6 +3,8 @@ class User < ApplicationRecord
   has_many :projects
   has_many :tasks, as: :assignee
 
+  enum :level, {admin: "admin", user: "user"}, prefix: true
+
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true
   validates :password, presence: true, length: {minimum: 6}, if: :password_required?

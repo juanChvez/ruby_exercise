@@ -13,6 +13,7 @@ module Mutations
 
       def resolve(id:, name: nil, description: nil)
         user = require_authentication!(context)
+        require_admin!(context)
         raise GraphQL::ExecutionError, "Not authenticated" unless user
 
         project = user.projects.find_by(id: id)

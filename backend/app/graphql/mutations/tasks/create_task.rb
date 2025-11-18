@@ -16,6 +16,7 @@ module Mutations
 
       def resolve(project_id:, title:, description: nil, status: "pending", assignee_type: nil, assignee_id: nil)
         user = require_authentication!(context)
+        require_admin!(context)
 
         project = user.projects.find_by(id: project_id)
         return {task: nil, errors: ["Project not found"]} unless project

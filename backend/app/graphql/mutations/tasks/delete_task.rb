@@ -11,6 +11,7 @@ module Mutations
 
       def resolve(id:)
         user = require_authentication!(context)
+        require_admin!(context)
 
         task = Task.joins(project: :user)
           .where(projects: {user_id: user.id})

@@ -1,7 +1,7 @@
 module Queries
   module Tasks
     class FetchTasks < BaseQuery
-      description "Fetches all tasks from a specific project belonging to the authenticated user, ordered by most recently created first."
+      description "Fetches all tasks assigned to the authenticated user, optionally filtered by project, ordered by most recently created first."
       include Mixins::Authorization
 
       argument :project_id, ID, required: false
@@ -10,16 +10,19 @@ module Queries
       def resolve(project_id: nil)
         user = require_authentication!(context)
 
-        if project_id.present?
-          project = user.projects.find_by(id: project_id)
-          return [] unless project
-
-          project.tasks.order(created_at: :desc)
+        if user.level == "admin"
+          tasks = Task.all
+          tasks = tasks.where(project_id: project_id) if project_id.present?
         else
-          Task.joins(:project)
-            .where(projects: {user_id: user.id})
-            .order(created_at: :desc)
+          tasks = if project_id.present?
+            # Only tasks in projects the user is assigned to
+            Task.where(assignee_id: user.id, project_id: project_id)
+          else
+            Task.where(assignee_id: user.id)
+          end
         end
+
+        tasks.order(created_at: :desc)
       end
     end
   end

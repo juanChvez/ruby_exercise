@@ -12,7 +12,7 @@ module Mutations
 
       def resolve(name:, description: nil)
         user = require_authentication!(context)
-        return {user: nil, errors: ["User not found"]} unless user
+        require_admin!(context)
 
         project = user.projects.new(name: name, description: description)
 

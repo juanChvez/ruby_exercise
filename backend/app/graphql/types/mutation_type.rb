@@ -7,6 +7,7 @@ module Types
     field :update_user, mutation: Mutations::Users::UpdateUser
     field :delete_user, mutation: Mutations::Users::DeleteUser
     field :login_user, mutation: Mutations::Users::LoginUser
+    field :create_user_admin, mutation: Mutations::Users::CreateAdmin
 
     # Projects
     field :create_project, mutation: Mutations::Projects::CreateProject
