@@ -17,6 +17,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "task_status", ["pending", "in_progress", "completed", "archived"]
+  create_enum "user_level", ["admin", "user"]
 
   create_table "activities", id: :serial, force: :cascade do |t|
     t.string "action", limit: 50
@@ -31,6 +32,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
     t.text "description"
     t.string "name", limit: 100, null: false
     t.datetime "updated_at", precision: nil, default: -> { "now()" }
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "idx_projects_user_id"
   end
 
   create_table "tasks", id: :serial, force: :cascade do |t|
@@ -49,6 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
   create_table "users", id: :serial, force: :cascade do |t|
     t.datetime "created_at", precision: nil, default: -> { "now()" }
     t.string "email", limit: 100, null: false
+    t.enum "level", default: "user", null: false, enum_type: "user_level"
     t.string "name", limit: 50, null: false
     t.string "password_digest", limit: 255, null: false
     t.datetime "updated_at", precision: nil, default: -> { "now()" }
@@ -56,5 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
     t.unique_constraint ["email"], name: "users_email_key"
   end
 
+  add_foreign_key "projects", "users", name: "fk_projects_users", on_delete: :cascade
+  add_foreign_key "projects", "users", name: "projects_user_id_fkey", on_delete: :cascade
   add_foreign_key "tasks", "projects", name: "fk_tasks_projects", on_delete: :cascade
 end
