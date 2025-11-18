@@ -12,6 +12,32 @@ BEGIN
 END
 $$;
 
+-- Ensure ENUM for user level: 'admin', 'user'
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_level') THEN
+        CREATE TYPE user_level AS ENUM ('admin', 'user');
+    END IF;
+END
+$$;
+
+-- Change users.level to ENUM type 'user_level' if not already
+DO $$
+DECLARE
+    current_type text;
+BEGIN
+    SELECT data_type INTO current_type
+    FROM information_schema.columns
+    WHERE table_name = 'users' AND column_name = 'level';
+
+    IF current_type IS NOT NULL AND current_type <> 'USER-DEFINED' THEN
+        EXECUTE 'ALTER TABLE users ALTER COLUMN level DROP DEFAULT';
+        EXECUTE 'ALTER TABLE users ALTER COLUMN level TYPE user_level USING level::text::user_level';
+        EXECUTE 'ALTER TABLE users ALTER COLUMN level SET DEFAULT ''user''::user_level';
+    END IF;
+END
+$$;
+
 -- Change status column to use ENUM type only if it is not already user-defined
 DO $$
 DECLARE
@@ -49,6 +75,21 @@ BEGIN
 END
 $$;
 
+-- Add foreign key constraint on projects.user_id referencing users.id (project owner) if it does not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk_projects_users'
+    ) THEN
+        ALTER TABLE projects
+            ADD CONSTRAINT fk_projects_users
+            FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE;
+    END IF;
+END
+$$;
+
 -- Create indexes if they do not exist
 DO $$
 BEGIN
@@ -62,6 +103,10 @@ BEGIN
 
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_activities_record') THEN
         CREATE INDEX idx_activities_record ON activities(record_type, record_id);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_projects_user_id') THEN
+        CREATE INDEX idx_projects_user_id ON projects(user_id);
     END IF;
 END
 $$;
