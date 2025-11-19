@@ -37,6 +37,22 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../services/frontend/Dockerfile.dev
+      args:
+        PORT: ${FRONTEND_PORT}
+    container_name: devhub-frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
 networks:
   app-network:
     driver: bridge

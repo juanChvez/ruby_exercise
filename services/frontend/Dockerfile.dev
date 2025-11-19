@@ -1,1 +1,24 @@
-# Default file
+# Base image with Node.js
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json / yarn.lock
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --silent
+
+# Copy all source code
+COPY . .
+
+# Build ARG for port, default is 5173
+ARG PORT=5173
+ENV PORT=$PORT
+
+# Expose Vite port
+EXPOSE $PORT
+
+# Command to run Vite dev server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
