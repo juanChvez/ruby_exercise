@@ -29,7 +29,7 @@ const ListItem = ({ project }: { project: ProjectListItem }): JSX.Element => (
         </div>
         {/* Title and Description */}
         <div className="uk-width-expand">
-          <p className="uk-margin-remove-bottom uk-text-bold uk-text-large">
+          <p className="uk-margin-remove-bottom uk-text-large">
             {project.title}
           </p>
           <p className="uk-text-meta uk-margin-remove uk-text-small">

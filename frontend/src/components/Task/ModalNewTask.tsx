@@ -93,7 +93,7 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
       className="uk-modal uk-open uk-flex uk-flex-middle uk-flex-center"
       style={{ display: "block" }}
     >
-      <div className="uk-modal-dialog uk-modal-body">
+      <div className="uk-modal-dialog uk-modal-body uk-border-rounded">
         <button
           className="uk-modal-close-default"
           type="button"
