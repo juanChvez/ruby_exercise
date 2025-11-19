@@ -1,7 +1,8 @@
 import { type JSX, useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { SidebarProvider, useLoading, useAuth } from "../context";
-import { authService, type User } from "../services";
+import { authService } from "../services";
+import { type User } from "../types/User";
 
 /**
  * The Profile component displays the currently authenticated user's profile information,
@@ -12,7 +13,7 @@ import { authService, type User } from "../services";
  * @component
  * @returns {JSX.Element} The rendered profile page
  */
-export default function Profile(): JSX.Element {
+export default function ProfilePage(): JSX.Element {
   /** The state holding the fetched user profile data. */
   const [userData, setUserData] = useState<User | null>(null);
   /** Boolean value indicating if the current user is an admin. */

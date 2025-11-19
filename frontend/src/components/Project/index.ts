@@ -1,15 +1,12 @@
 /**
- * Entry point for Project-related components.
- * @module Project
+ * Entry point for Project components.
  *
  * Exports:
- * - ProjectOverview: Displays the overview of a project.
- * - ProjectNew: Form to create a new project.
- * - ProjectMessage: Displays project-related messages.
+ * - ProjectsList: Component that displays a list of projects.
+ * - ProjectsOverview: Component that shows an overview/summary of projects.
  */
 
-import ProjectOverview from "./ProjectOverview";
-import ProjectNew from "./ProjectNew";
-import ProjectMessage from "./ProjectMessage";
+import ProjectsList from "./ProjectList";
+import ProjectsOverview from "./ProjectsOverview";
 
-export { ProjectMessage, ProjectOverview, ProjectNew };
+export { ProjectsList, ProjectsOverview };

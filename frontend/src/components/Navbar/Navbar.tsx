@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
 
-import { useAuth, useSidebar, useProject } from "../../context";
+import { useAuth, useSidebar } from "../../context";
 import { useIsMobile } from "../../hooks/useMediaQuery";
 
 import { logo } from "../../img";
@@ -9,7 +9,7 @@ import { logo } from "../../img";
 /**
  * Navbar component for the application.
  *
- * Displays the brand logo (and title) on the left, which links to "/project".
+ * Displays the brand logo (and title) on the left, which links to "/dashboard".
  * On mobile, shows a sidebar toggle button.
  * On the right, shows the authenticated user's name with a dropdown menu:
  * - View Profile: Navigates to the user's profile page.
@@ -21,8 +21,7 @@ export default function Navbar(): JSX.Element {
   const { logout, user } = useAuth();
   const isMobile = useIsMobile();
   const { toggleSidebar, closeSidebar, isOpen } = useSidebar();
-  const { setSelectedProject } = useProject();
-  const isProjectRoute = window.location.pathname.startsWith("/project");
+  const isProjectRoute = window.location.pathname.startsWith("/dashboard");
 
   /**
    * Handles click on the sidebar toggle button (visible in mobile view).
@@ -41,7 +40,6 @@ export default function Navbar(): JSX.Element {
    */
   const handleClickTitle = () => {
     closeSidebar();
-    setSelectedProject(null);
   };
 
 
@@ -58,10 +56,9 @@ export default function Navbar(): JSX.Element {
             {/* Sidebar toggle button */}
             {isMobile && isProjectRoute && (
               <button
-                className="uk-button uk-button-text uk-margin-small-right"
+                className="uk-button uk-button-text"
                 aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
                 type="button"
-                style={{ marginRight: 8 }}
                 onClick={handleClickBtn}
               >
                 <span
@@ -70,22 +67,20 @@ export default function Navbar(): JSX.Element {
               </button>
             )}
             <Link
-              to="/project"
+              to="/dashboard"
               className="uk-navbar-item uk-logo uk-flex uk-flex-middle uk-text-bold"
               onClick={handleClickTitle}
             >
               {!isMobile && (
                 <img
                   src={logo}
-                  alt="Tech Stack Recommender Logo"
+                  alt="DevHub Logo"
                   className="uk-margin-small-right"
                   style={{ height: 36 }}
                 />
               )}
-              <span className="uk-margin-small-left">
-                <span className={isMobile ? "uk-text-small" : "uk-text-large"}>
-                  Tech Stack Recommender
-                </span>
+              <span className={`${isMobile ? "uk-text-small" : "uk-text-large"}`}>
+                DevHub
               </span>
             </Link>
           </div>

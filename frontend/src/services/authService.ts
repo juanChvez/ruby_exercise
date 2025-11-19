@@ -1,39 +1,5 @@
 import { gql } from '@apollo/client';
 
-/**
- * Represents the structure of a user object.
- */
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  level: string;
-}
-
-/**
- * Request body for registering a new user.
- */
-export interface RegisterData {
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-  name: string;
-}
-
-/**
- * Request body for logging in.
- */
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export interface UserResponse {
-  user: User | null;
-  token?: string;
-  errors: string[];
-}
-
 const REGISTER_MUTATION = gql`
 mutation Register($email: String!, $password: String!, $name: String!, $passwordConfirmation: String!) {
   createUser(
@@ -73,7 +39,7 @@ query GetProfile {
     id
     name
     email
-    role
+    level
     created_at
     updated_at
   }

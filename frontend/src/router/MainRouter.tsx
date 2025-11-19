@@ -3,14 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { ProtectedRoute, PublicRoute } from ".";
 
-import { Login, Register, Project, Profile } from "../pages";
+import { LoginPage, RegisterPage, ProfilePage, DashboardPage } from "../pages";
 
-
-import {
-  ProjectMessage,
-  ProjectNew,
-  ProjectOverview,
-} from "../components/Project";
+import Dashboard from "../components/Dashboard/Dashboard";
+import { ProjectsList, ProjectsOverview } from "../components/Project";
+import { TaskList, TaskOverview } from "../components/Task";
 
 /**
  * MainRoutes component.
@@ -18,12 +15,15 @@ import {
  * Sets up the main application routing.
  *
  * Routes:
- * - `/login`: Public route, accessible only if not authenticated. Redirects authenticated users to `/project`.
- * - `/register`: Public route, accessible only if not authenticated. Redirects authenticated users to `/project`.
- * - `/project`: Protected parent route, accessible only to authenticated users.
- *   - `/project` (index): Shows the ProjectMessage component.
- *   - `/project/new`: Shows the ProjectNew component for creating a project.
- *   - `/project/:id`: Shows the ProjectOverview for a project by ID.
+ * - `/login`: Public route, accessible only if not authenticated. Redirects authenticated users to `/dashboard`.
+ * - `/register`: Public route, accessible only if not authenticated. Redirects authenticated users to `/dashboard`.
+ * - `/dashboard`: Protected parent route, accessible only to authenticated users.
+ *   - `/dashboard` (index): Shows the Dashboard (overview/stats/landing) component.
+ *   - `/dashboard/projects`: Shows the ProjectsList component.
+ *   - `/dashboard/projects/:id`: Shows the ProjectsOverview component for an individual project.
+ *   - `/dashboard/tasks`: Shows the TaskList component.
+ *   - `/dashboard/tasks/:id`: Shows the TaskOverview component for an individual task.
+ *   - `/profile`: Shows the ProfilePage for the user.
  * - Any other path: Redirects to `/login`.
  *
  * @returns {JSX.Element} Router configuration for the app.
@@ -37,7 +37,7 @@ export function MainRoutes(): JSX.Element {
           path="/login"
           element={
             <PublicRoute>
-              <Login />
+              <LoginPage />
             </PublicRoute>
           }
         />
@@ -45,7 +45,7 @@ export function MainRoutes(): JSX.Element {
           path="/register"
           element={
             <PublicRoute>
-              <Register />
+              <RegisterPage />
             </PublicRoute>
           }
         />
@@ -55,21 +55,23 @@ export function MainRoutes(): JSX.Element {
           path="/profile"
           element={
             <ProtectedRoute>
-              <Profile />
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/project"
+          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Project />
+              <DashboardPage />
             </ProtectedRoute>
           }
         >
-          <Route index element={<ProjectMessage />} />
-          <Route path="new" element={<ProjectNew />} />
-          <Route path=":id" element={<ProjectOverview />} />
+          <Route index element={<Dashboard />} />
+          <Route path="projects" element={<ProjectsList />} />
+          <Route path="projects/:id" element={<ProjectsOverview />} />
+          <Route path="tasks" element={<TaskList/>} />
+          <Route path="tasks/:id" element={<TaskOverview/>} />
         </Route>
 
         {/* Catch-all: redirect to /login */}

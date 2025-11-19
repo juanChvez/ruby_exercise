@@ -1,11 +1,18 @@
-import { createContext, useContext, useState, type JSX, type ReactNode } from "react";
 import {
-  type UserResponse,
-  authService,
+  createContext,
+  useContext,
+  useState,
+  type JSX,
+  type ReactNode,
+} from "react";
+
+import { authService } from "../services";
+import {
+  type User,
   type LoginData,
   type RegisterData,
-  type User,
-} from "../services";
+  type UserResponse,
+} from "../types/User";
 
 import { useMutation } from "@apollo/client/react";
 
@@ -43,7 +50,8 @@ interface AuthContextType {
  * Authentication context instance.
  * @type {React.Context<AuthContextType | null>}
  */
-const AuthContext: React.Context<AuthContextType | null> = createContext<AuthContextType | null>(null);
+const AuthContext: React.Context<AuthContextType | null> =
+  createContext<AuthContextType | null>(null);
 
 /**
  * Custom hook to access the authentication context.
@@ -64,14 +72,22 @@ export const useAuth = (): AuthContextType => {
  * @param {ReactNode} props.children - The components which will receive authentication context.
  * @returns {JSX.Element} The AuthProvider component.
  */
-export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+export const AuthProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element => {
   const [user, setUser] = useState<User | null>(
     JSON.parse(localStorage.getItem("user") || "null")
   );
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
-  const [registerMutation] = useMutation<{ createUser: UserResponse }>(authService.REGISTER_MUTATION);
-  const [loginMutation] = useMutation<{ loginUser: UserResponse }>(authService.LOGIN_MUTATION);
+  const [registerMutation] = useMutation<{ createUser: UserResponse }>(
+    authService.REGISTER_MUTATION
+  );
+  const [loginMutation] = useMutation<{ loginUser: UserResponse }>(
+    authService.LOGIN_MUTATION
+  );
 
   /**
    * Logs in a user by submitting credentials to the authService and storing the result.
@@ -81,13 +97,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const login = async (loginData: LoginData): Promise<void> => {
     const { data } = await loginMutation({ variables: loginData });
     if (!data || !data.loginUser) {
-      throw new Error('Login failed. No response from server.');
+      throw new Error("Login failed. No response from server.");
     }
 
     const response = data.loginUser;
     const { token, user, errors } = response;
     if (errors && errors.length > 0) {
-      throw new Error(errors.join(', '));
+      throw new Error(errors.join(", "));
     }
 
     if (user) {
@@ -96,8 +112,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
-      setToken(token || '');
-      localStorage.setItem("token", token || '');
+      setToken(token || "");
+      localStorage.setItem("token", token || "");
+    } else {
+      throw new Error("User not found.");
     }
   };
 
@@ -111,22 +129,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const { data } = await registerMutation({
       variables: registerData,
     });
-    if (!data) throw new Error('No response from server');
+    if (!data) throw new Error("No response from server");
 
     const response = data.createUser;
     const { token, user, errors } = response;
     if (errors && errors.length > 0) {
-      throw new Error(errors.join(', '));
+      throw new Error(errors.join(", "));
     }
-    
+
     if (user) {
       const { id, name, email, level } = user;
       const newUser = { id, name, email, level };
-      
+
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
-      setToken(token || '');
-      localStorage.setItem("token", token || '');
+      setToken(token || "");
+      localStorage.setItem("token", token || "");
     }
   };
 

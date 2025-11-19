@@ -1,9 +1,9 @@
 import type { JSX } from "react";
 
 import client from "./apollo";
-import { ApolloProvider } from '@apollo/client/react';
+import { ApolloProvider } from "@apollo/client/react";
 
-import { AuthProvider, LoadingProvider, ProjectProvider } from "./context";
+import { AuthProvider, LoadingProvider } from "./context";
 import { MainRoutes } from "./router";
 
 import "./App.css";
@@ -21,9 +21,7 @@ function App(): JSX.Element {
     <ApolloProvider client={client}>
       <AuthProvider>
         <LoadingProvider>
-          <ProjectProvider>
-            <MainRoutes />
-          </ProjectProvider>
+          <MainRoutes />
         </LoadingProvider>
       </AuthProvider>
     </ApolloProvider>

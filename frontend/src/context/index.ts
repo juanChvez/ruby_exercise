@@ -11,12 +11,6 @@ export * from "./AuthContext";
 export * from "./LaodingContext";
 
 /**
- * Re-exports all exports from ProjectContext.
- * This enables components to access project-related context utilities from this central index file.
- */
-export * from "./ProjectContext";
-
-/**
  * Re-exports all exports from SidebarContext.
  * This enables components to access sidebar-related context utilities from this central index file.
  */

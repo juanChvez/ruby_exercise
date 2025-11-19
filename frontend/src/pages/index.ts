@@ -1,15 +1,16 @@
-import Login from "./Login";
-import Register from "./Register";
-import Project from "./Project";
-import Profile from "./Profile";
+import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
+import DashboardPage from "./DashboardPage";
+import ProfilePage from "./ProfilePage";
 
 /**
- * Collection of main page components.
+ * Exports the main page components for the application.
  *
- * - `Login`: The login page component.
- * - `Register`: The registration page component.
- * - `Project`: The main project project/layout page component.
+ * - `Login`: User authentication (login) page.
+ * - `Register`: User account creation (registration) page.
+ * - `Dashboard`: Main dashboard page after authentication.
+ * - `Profile`: User profile page.
  *
  * @module Pages
  */
-export { Login, Register, Project, Profile };
+export { LoginPage, RegisterPage, DashboardPage, ProfilePage };

@@ -10,7 +10,7 @@ import { logo } from "../img";
  * @component
  * @returns {JSX.Element} The rendered login page component.
  */
-export default function Login(): JSX.Element {
+export default function LoginPage(): JSX.Element {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { loading, setLoading, setMessage } = useLoading();
@@ -29,7 +29,7 @@ export default function Login(): JSX.Element {
 
     try {
       await login({ email, password });
-      navigate("/project");
+      navigate("/dashboard");
     } catch {
       setError("Incorrect email or password. Please try again.");
     } finally {

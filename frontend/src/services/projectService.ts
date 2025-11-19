@@ -1,7 +1,3 @@
-// TODO: Ajsut
-import { apiFetch } from "./apiClient";
-import { type ProjectTreeItem, type ProjectData } from "../context";
-
 /**
  * Service for managing project-related API operations.
  *

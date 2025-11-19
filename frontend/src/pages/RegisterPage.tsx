@@ -13,7 +13,7 @@ import { logo } from "../img";
  * @component
  * @returns {JSX.Element} The registration form UI.
  */
-export default function Register(): JSX.Element {
+export default function RegisterPage(): JSX.Element {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { loading, setLoading, setMessage } = useLoading();
@@ -63,7 +63,7 @@ export default function Register(): JSX.Element {
 
     try {
       await register({name, email, password, passwordConfirmation: confirm});
-      navigate("/project");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(
         err?.message ||
