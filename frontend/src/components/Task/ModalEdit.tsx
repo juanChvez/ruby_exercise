@@ -7,6 +7,7 @@ import {
 } from "../../types/Task";
 import { type UserSelectItem } from "../../types/User";
 import { userService } from "../../services";
+import { useAuth } from "../../context";
 
 /**
  * Props for the ModalEdit component.
@@ -45,6 +46,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({
   /**
    * Local state for the editable fields: title, description, status, assignee.
    */
+  const { isAdmin } = useAuth();
   const [taskTitle, setTaskTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<TaskStatus>("TODO");
@@ -125,29 +127,51 @@ const ModalEdit: React.FC<ModalEditProps> = ({
         />
         <h3 className="uk-modal-title">Edit Task</h3>
         <form onSubmit={handleSave}>
-          <div className="uk-margin">
-            <label className="uk-form-label">Title</label>
-            <div className="uk-form-controls">
-              <input
-                className="uk-input"
-                type="text"
-                value={taskTitle}
-                onChange={(e) => setTaskTitle(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="uk-margin">
-            <label className="uk-form-label">Description</label>
-            <div className="uk-form-controls">
-              <textarea
-                className="uk-textarea"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+          {/* Only admin can edit title, description, assignee */}
+          {isAdmin && (
+            <>
+              <div className="uk-margin">
+                <label className="uk-form-label">Title</label>
+                <div className="uk-form-controls">
+                  <input
+                    className="uk-input"
+                    type="text"
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="uk-margin">
+                <label className="uk-form-label">Description</label>
+                <div className="uk-form-controls">
+                  <textarea
+                    className="uk-textarea"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="uk-margin">
+                <label className="uk-form-label">Assignee</label>
+                <div className="uk-form-controls">
+                  <select
+                    className="uk-select"
+                    value={assignee}
+                    onChange={(e) => setAssignee(e.target.value)}
+                    required
+                  >
+                    {users.map((option) => (
+                      <option key={`${option.id}-${option.name}`} value={option.id}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
           <div className="uk-margin">
             <label className="uk-form-label">Status</label>
             <div className="uk-form-controls">
@@ -162,23 +186,6 @@ const ModalEdit: React.FC<ModalEditProps> = ({
                       .replace("TODO", "To Do")
                       .replace("IN_PROGRESS", "In Progress")
                       .replace("DONE", "Done")}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="uk-margin">
-            <label className="uk-form-label">Assignee</label>
-            <div className="uk-form-controls">
-              <select
-                className="uk-select"
-                value={assignee}
-                onChange={(e) => setAssignee(e.target.value)}
-                required
-              >
-                {users.map((option) => (
-                  <option key={`${option.id}-${option.name}`} value={option.id}>
-                    {option.name}
                   </option>
                 ))}
               </select>

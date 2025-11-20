@@ -5,8 +5,9 @@ import { ModalNewTask } from "../Task";
 import { type Project } from "../../types/Project";
 import { useIsMobile } from "../../hooks/useMediaQuery";
 import { projectService, tasksService } from "../../services";
-import { useLoading } from "../../context";
+import { useLoading, useAuth } from "../../context";
 import type { NewTask, Task } from "../../types/Task";
+
 
 /**
  * ProjectsOverview Component
@@ -28,6 +29,7 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
   const { setLoading, setMessage } = useLoading();
   const isMobile = useIsMobile();
   const [showModal, setShowModal] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (!id) return;
@@ -97,22 +99,24 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
           </div>
         </div>
         {/* Create Task Button */}
-        <button
-          className="uk-button uk-flex uk-flex-middle uk-background-secondary"
-          style={{ color: "#fff" }}
-          onClick={() => setShowModal(true)}
-        >
-          <span
-            className="uk-icon uk-margin-small-right"
-            data-uk-icon="icon: plus; ratio: 1"
-          ></span>
-          Create Task
-        </button>
+        {isAdmin && (
+          <button
+            className="uk-button uk-flex uk-flex-middle uk-background-secondary"
+            style={{ color: "#fff" }}
+            onClick={() => setShowModal(true)}
+          >
+            <span
+              className="uk-icon uk-margin-small-right"
+              data-uk-icon="icon: plus; ratio: 1"
+            ></span>
+            Create Task
+          </button>
+        )}
       </div>
 
       {/* Modal for New Task */}
       <ModalNewTask
-        show={showModal}
+        show={showModal && isAdmin}
         onClose={() => setShowModal(false)}
         onCreate={handleCreateTask}
         projectSelected={project?.id as unknown as string}

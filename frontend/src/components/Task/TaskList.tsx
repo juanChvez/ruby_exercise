@@ -3,13 +3,14 @@ import TaskCard from "./TaskCard";
 import type { NewTask, Task } from "../../types/Task";
 import ModalNewTask from "./ModalNewTask";
 import { tasksService } from "../../services";
-import { useLoading } from "../../context";
+import { useLoading, useAuth } from "../../context";
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const { setLoading, setMessage } = useLoading();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     fetchTaskList();
@@ -82,7 +83,7 @@ const TaskList: React.FC = () => {
     <div className="uk-container uk-margin-top uk-width-1-1">
       {/* --- New Task Modal --- */}
       <ModalNewTask
-        show={showNewTaskModal}
+        show={showNewTaskModal && isAdmin}
         onClose={handleCloseModal}
         onCreate={handleCreateTask}
       />
@@ -96,18 +97,20 @@ const TaskList: React.FC = () => {
           </p>
         </div>
         {/* Create Task Button */}
-        <button
-          className="uk-button uk-flex uk-flex-middle uk-background-secondary"
-          style={{ color: "#fff" }}
-          type="button"
-          onClick={handleCreateTaskClick}
-        >
-          <span
-            className="uk-icon uk-margin-small-right"
-            data-uk-icon="icon: plus; ratio: 1"
-          ></span>
-          Create Task
-        </button>
+        {isAdmin && (
+          <button
+            className="uk-button uk-flex uk-flex-middle uk-background-secondary"
+            style={{ color: "#fff" }}
+            type="button"
+            onClick={handleCreateTaskClick}
+          >
+            <span
+              className="uk-icon uk-margin-small-right"
+              data-uk-icon="icon: plus; ratio: 1"
+            ></span>
+            Create Task
+          </button>
+        )}
       </div>
 
       {/* --- Search Bar --- */}

@@ -13,9 +13,7 @@ module Queries
         if user.level == "admin"
           Task.find_by(id: id)
         else
-          Task.joins(:project)
-            .where(projects: {user_id: user.id})
-            .find_by(id: id)
+          Task.where({assignee_id: user.id}).find_by(id: id)
         end
       end
     end

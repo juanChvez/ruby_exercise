@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type JSX } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { type TaskDetails, type UpdateTask } from "../../types/Task";
 import { getStatusLabel } from "./TaskCard";
 //import ActivityCard from "./ActivityCard";
@@ -18,6 +18,7 @@ import { useLoading } from "../../context";
  */
 const TaskOverview: React.FC = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
   const [taskDetails, setTaskDetails] = useState<TaskDetails | null>(null);
   const { setLoading, setMessage } = useLoading();
@@ -76,6 +77,9 @@ const TaskOverview: React.FC = (): JSX.Element => {
     try {
       const task = await tasksService.getTask(taskId);
       setTaskDetails(task);
+      if (!task) {
+        navigate('dashboard')
+      }
     } catch (error) {
       setMessage("Failed to load task details");
       setTaskDetails(null);

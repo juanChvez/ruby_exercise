@@ -5,7 +5,7 @@ import ModalNewProject from "./ModalNewProject";
 
 import { projectService } from "../../services";
 
-import { useLoading } from "../../context";
+import { useLoading, useAuth } from "../../context";
 import { type ProjectListItem } from "../../types/Project";
 
 /**
@@ -26,6 +26,8 @@ const ProjectsList: React.FC = (): JSX.Element => {
   const [projectsData, setProjectsData] = useState<ProjectListItem[]>([]);
   /** setLoading - Shows loading indicator; setMessage - Sets a loading/status message */
   const { setLoading, setMessage } = useLoading();
+
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     fetchProjectsList();
@@ -113,21 +115,23 @@ const ProjectsList: React.FC = (): JSX.Element => {
           </p>
         </div>
         {/* Create Button */}
-        <button
-          className="uk-button uk-flex uk-flex-middle uk-background-secondary"
-          style={{ color: "#fff" }}
-          onClick={() => setShowModal(true)}
-        >
-          <span
-            className="uk-icon uk-margin-small-right"
-            data-uk-icon="icon: plus; ratio: 1"
-          ></span>
-          Create Project
-        </button>
+        {isAdmin && (
+          <button
+            className="uk-button uk-flex uk-flex-middle uk-background-secondary"
+            style={{ color: "#fff" }}
+            onClick={() => setShowModal(true)}
+          >
+            <span
+              className="uk-icon uk-margin-small-right"
+              data-uk-icon="icon: plus; ratio: 1"
+            ></span>
+            Create Project
+          </button>
+        )}
       </div>
 
       {/* Modal for New Project */}
-      {showModal && (
+      {showModal && isAdmin && (
         <ModalNewProject
           show={showModal}
           onClose={() => setShowModal(false)}

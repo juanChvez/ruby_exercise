@@ -10,7 +10,7 @@ module Queries
       argument :email, String, required: false
 
       def resolve(name: nil, email: nil)
-        require_admin!(context)
+        require_authentication!(context)
         users = User.where.not(level: 'admin')
         # Filter by name if provided
         users = users.where("name ILIKE ?", "%#{name}%") if name.present?

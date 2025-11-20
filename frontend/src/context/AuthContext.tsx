@@ -29,6 +29,10 @@ interface AuthContextType {
    */
   token: string | null;
   /**
+   * Whether the current user is an administrator.
+   */
+  isAdmin: boolean;
+  /**
    * Attempts to authenticate the user.
    * @param {LoginData} loginData - The user's login credentials (email and password).
    * @returns {Promise<void>} A promise that resolves when login is complete.
@@ -82,6 +86,8 @@ export const AuthProvider = ({
   );
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const [registerMutation] = useMutation<{ createUser: UserResponse }>(
     authService.REGISTER_MUTATION
   );
@@ -110,6 +116,7 @@ export const AuthProvider = ({
       const { id, name, email, level } = user;
       const newUser = { id, name, email, level };
 
+      setIsAdmin(level === "admin");
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setToken(token || "");
@@ -141,6 +148,7 @@ export const AuthProvider = ({
       const { id, name, email, level } = user;
       const newUser = { id, name, email, level };
 
+      setIsAdmin(level === "admin");
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setToken(token || "");
@@ -152,6 +160,7 @@ export const AuthProvider = ({
    * Logs the user out and clears their session from local storage.
    */
   const logout = () => {
+    setIsAdmin(false);
     setUser(null);
     setToken(null);
     localStorage.removeItem("user");
@@ -159,7 +168,7 @@ export const AuthProvider = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, login, isAdmin, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
