@@ -1,7 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 
 import type { DashboardData } from "../../types/Dashboard";
-import { dashboardService, emptyState } from "../../services/dashboardService";
+import { dashboardService, emptyState } from "../../services";
 
 import StateCard from "./StateCard";
 import StatusPanel from "./StatusPanel";

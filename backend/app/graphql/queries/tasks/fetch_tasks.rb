@@ -5,12 +5,12 @@ module Queries
       include Mixins::Authorization
 
       argument :project_id, ID, required: false
-      type [Types::Tasks::TaskType], null: false
+      type [Types::Tasks::TaskItemType], null: false
 
       def resolve(project_id: nil)
         user = require_authentication!(context)
 
-        if user.level == "admin"
+        if user.level_admin?
           tasks = Task.all
           tasks = tasks.where(project_id: project_id) if project_id.present?
         else

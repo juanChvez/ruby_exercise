@@ -1,47 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TaskCard from "./TaskCard";
 import type { Task } from "../../types/Task";
 import ModalNewTask from "./ModalNewTask";
-
-// Mock data for tasks
-const mockTasks: Task[] = [
-  {
-    id: 1,
-    title: "Implement authentication",
-    description: "Add login, signup, and password reset functionality",
-    status: "TODO",
-    date: "19/11/2025",
-  },
-  {
-    id: 2,
-    title: "Design database schema",
-    description: "Create ER diagrams and define all tables and relationships",
-    status: "IN_PROGRESS",
-    date: "19/11/2025",
-    assigned: "Jane Smith",
-  },
-  {
-    id: 3,
-    title: "Set up project structure",
-    description:
-      "Initialize the project with proper folder structure and dependencies",
-    status: "DONE",
-    date: "19/11/2025",
-    assigned: "John Doe",
-  },
-];
+import { tasksService } from "../../services";
+import { useLoading } from "../../context";
 
 const TaskList: React.FC = () => {
-  /** Search term controlled by user input */
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  // State for modal visibility
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const { setLoading, setMessage } = useLoading();
+
+  useEffect(() => {
+    fetchTaskList();
+  }, []);
 
   /**
    * Filter tasks based on the current search term.
    * The filter matches the search term against task titles and descriptions.
    */
-  const filteredTasks = mockTasks.filter(
+  const filteredTasks = tasks.filter(
     (task) =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -58,10 +36,32 @@ const TaskList: React.FC = () => {
     // Could add logic to insert into task list here
   };
 
+  /**
+   * Fetches the list of tasks from the backend service.
+   * Replaces the current tasks usage by fetching real data from API.
+   */
+  const fetchTaskList = async () => {
+    setLoading(true);
+    setMessage("Loading tasks...");
+    try {
+      const taskList = await tasksService.getTaskList();
+      setTasks(taskList);
+    } catch (error) {
+      setMessage("Failed to load tasks");
+    } finally {
+      setLoading(false);
+      setMessage(undefined);
+    }
+  };
+
   return (
     <div className="uk-container uk-margin-top uk-width-1-1">
       {/* --- New Task Modal --- */}
-      <ModalNewTask show={showNewTaskModal} onClose={handleCloseModal} onCreate={handleCreateTask} />
+      <ModalNewTask
+        show={showNewTaskModal}
+        onClose={handleCloseModal}
+        onCreate={handleCreateTask}
+      />
 
       {/* --- Header --- */}
       <div className="uk-flex uk-flex-middle uk-flex-between uk-margin-medium-bottom">
@@ -102,7 +102,7 @@ const TaskList: React.FC = () => {
 
       {/* --- Task List --- */}
       {filteredTasks.length > 0 ? (
-        <ul className="uk-list uk-list-large">
+        <ul className="uk-list uk-list-large" style={{maxHeight: "60vh", overflow: "auto"}}>
           {filteredTasks.map((task) => (
             <TaskCard key={task.id} task={task} layout="compact" />
           ))}

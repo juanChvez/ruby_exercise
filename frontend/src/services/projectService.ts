@@ -1,9 +1,6 @@
 import client from "../apollo";
-import {
-  PROJECT_LIST,
-  CREATE_PROJECT,
-  GET_PROJECT,
-} from "../graphql/queries/projects";
+import { PROJECT_LIST, GET_PROJECT } from "../graphql/queries/projects";
+import { CREATE_PROJECT } from "../graphql/mutations/projects";
 import { type ProjectListItem, type Project } from "../types/Project";
 
 /**

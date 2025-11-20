@@ -151,7 +151,7 @@ const ProjectsList: React.FC = (): JSX.Element => {
 
       {/* --- Project List --- */}
       {filteredProjects.length > 0 ? (
-        <ul className="uk-list uk-list-large">
+        <ul className="uk-list uk-list-large" style={{maxHeight: "60vh", overflow: "auto"}}>
           {filteredProjects.map((project) => (
             <ListItem key={project.id} project={project} />
           ))}
