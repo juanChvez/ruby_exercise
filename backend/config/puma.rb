@@ -46,7 +46,7 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 # ========================================
 if ENV['RAILS_ENV'] == 'production'
   # Workers solo en producción
-  workers ENV.fetch("WEB_CONCURRENCY", 2)
+  workers ENV.fetch("WEB_CONCURRENCY", 1)
   
   # Preload app para mejor uso de memoria
   preload_app!

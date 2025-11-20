@@ -121,3 +121,6 @@ yarn-debug.log*
 # Development Containers
 # ===================================
 /.devcontainer
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+

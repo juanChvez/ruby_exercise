@@ -2,7 +2,7 @@
 set -e
 
 echo "Waiting for database..."
-until bundle exec rails runner "ActiveRecord::Base.connection.execute('SELECT 1')" &>/dev/null; do
+until bundle exec rails db:prepare &>/dev/null; do
   sleep 2
 done
 
