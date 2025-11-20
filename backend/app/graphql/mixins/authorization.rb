@@ -11,5 +11,9 @@ module Mixins
       raise GraphQL::ExecutionError, "Admin only" unless user.level == "admin"
       user
     end
+
+    def is_admin?(user)
+      user && user.level == "admin"
+    end
   end
 end

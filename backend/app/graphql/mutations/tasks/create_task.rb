@@ -14,7 +14,7 @@ module Mutations
       field :task, Types::TaskType, null: true
       field :errors, [String], null: false
 
-      def resolve(project_id:, title:, description: nil, status: "pending", assignee_type: nil, assignee_id: nil)
+      def resolve(project_id:, title:, description: nil, status: "TODO", assignee_type: nil, assignee_id: nil)
         user = require_authentication!(context)
         require_admin!(context)
 

@@ -32,9 +32,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM tasks WHERE title = 'Setup Rails project') THEN
     INSERT INTO tasks (title, description, status, project_id, assignee_type, assignee_id)
     VALUES
-      ('Setup Rails project', 'Initialize Rails 7 with engines', 'completed', 1, 'User', 1),
-      ('Add GraphQL API', 'Implement graphql-ruby basics', 'pending', 1, 'User', 2),
-      ('Design admin dashboard', 'Add reports and charts', 'in_progress', 2, 'User', 1);
+      ('Setup Rails project', 'Initialize Rails 7 with engines', 'DONE', 1, 'User', 1),
+      ('Add GraphQL API', 'Implement graphql-ruby basics', 'TODO', 1, 'User', 2),
+      ('Design admin dashboard', 'Add reports and charts', 'IN_PROGRESS', 2, 'User', 1);
   END IF;
 END$$;
 

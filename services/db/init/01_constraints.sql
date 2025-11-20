@@ -7,7 +7,7 @@
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'task_status') THEN
-        CREATE TYPE task_status AS ENUM ('pending', 'in_progress', 'completed', 'archived');
+        CREATE TYPE task_status AS ENUM ('TODO', 'IN_PROGRESS', 'DONE');
     END IF;
 END
 $$;
@@ -55,7 +55,7 @@ BEGIN
         EXECUTE 'ALTER TABLE tasks ALTER COLUMN status TYPE task_status USING status::text::task_status';
 
         -- Restore default with ENUM type
-        EXECUTE 'ALTER TABLE tasks ALTER COLUMN status SET DEFAULT ''pending''::task_status';
+        EXECUTE 'ALTER TABLE tasks ALTER COLUMN status SET DEFAULT ''TODO''::task_status';
     END IF;
 END
 $$;

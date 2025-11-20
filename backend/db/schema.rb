@@ -16,7 +16,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "task_status", ["pending", "in_progress", "completed", "archived"]
+  create_enum "task_status", ["TODO", "IN_PROGRESS", "DONE"]
   create_enum "user_level", ["admin", "user"]
 
   create_table "activities", id: :serial, force: :cascade do |t|
@@ -42,7 +42,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_181609) do
     t.datetime "created_at", precision: nil, default: -> { "now()" }
     t.text "description"
     t.integer "project_id", null: false
-    t.enum "status", default: "pending", enum_type: "task_status"
+    t.enum "status", default: "TODO", enum_type: "task_status"
     t.string "title", limit: 100, null: false
     t.datetime "updated_at", precision: nil, default: -> { "now()" }
     t.index ["assignee_type", "assignee_id"], name: "idx_tasks_assignee"

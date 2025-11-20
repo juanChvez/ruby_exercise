@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
-    status VARCHAR(20) DEFAULT 'pending',
+    status VARCHAR(20) DEFAULT 'TODO',
     project_id INTEGER NOT NULL,
     assignee_type VARCHAR(50),
     assignee_id INTEGER,

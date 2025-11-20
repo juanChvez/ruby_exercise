@@ -121,3 +121,14 @@ Desktop.ini
 *.so
 *.class
 *.exe
+# ===================================
+# Frontend (Vite)
+# ===================================
+node_modules/
+dist/
+.vite/
+# Vite cache (if using newer versions)
+.cache/
+# Optional: local env files for Vite
+.env.local
+.env.*.local

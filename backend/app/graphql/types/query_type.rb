@@ -9,6 +9,7 @@ module Types
     # Projects
     field :projects, resolver: Queries::Projects::FetchProjects
     field :project, resolver: Queries::Projects::FetchProject
+    field :dashboard, resolver: Queries::Projects::FetchDashboard
 
     # Tasks
     field :task, resolver: Queries::Tasks::FetchTask

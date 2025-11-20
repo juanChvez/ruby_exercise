@@ -53,7 +53,7 @@ const TaskList: React.FC = () => {
   const handleCloseModal = () => setShowNewTaskModal(false);
 
   // For now, this just closes the modal. In the future, you can add logic to update the task list.
-  const handleCreateTask = (task: any) => {
+  const handleCreateTask = () => {
     setShowNewTaskModal(false);
     // Could add logic to insert into task list here
   };
