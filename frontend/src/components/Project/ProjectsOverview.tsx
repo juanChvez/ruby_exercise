@@ -4,8 +4,9 @@ import TaskCard from "../Task/TaskCard";
 import { ModalNewTask } from "../Task";
 import { type Project } from "../../types/Project";
 import { useIsMobile } from "../../hooks/useMediaQuery";
-import { projectService } from "../../services";
+import { projectService, tasksService } from "../../services";
 import { useLoading } from "../../context";
+import type { NewTask, Task } from "../../types/Task";
 
 /**
  * ProjectsOverview Component
@@ -46,6 +47,36 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
       setLoading(false);
     }
   };
+  
+  /**
+   * Creates a new task using the tasksService.
+   *
+   * @param {NewTask} newTask - The new task data to be created.
+   * @returns {Promise<Task | null>} The created task or null if failed.
+   */
+  const handleCreateTask = async (newTask: NewTask): Promise<Task | null> => {
+    setLoading(true);
+    setMessage("Creating new task...");
+    try {
+      const createdTask = await tasksService.createTask(newTask);
+      if (createdTask) {
+        fetchProject();
+        setMessage("Task created successfully!");
+        return createdTask;
+      } else {
+        setMessage("Failed to create new task.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Failed to create new task:", error);
+      setMessage("Failed to create new task.");
+      return null;
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMessage(undefined), 1000);
+      setShowModal(false);
+    }
+  };
 
   return (
     <div className="uk-container uk-margin-top uk-width-1-1">
@@ -80,14 +111,12 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
       </div>
 
       {/* Modal for New Task */}
-      {showModal && (
-        <ModalNewTask
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          onCreate={() => setShowModal(false)}
-          project={project?.title}
-        />
-      )}
+      <ModalNewTask
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onCreate={handleCreateTask}
+        projectSelected={project?.id as unknown as string}
+      />
 
       {/* --- Kanban Grid (3 Columns) --- */}
       <div

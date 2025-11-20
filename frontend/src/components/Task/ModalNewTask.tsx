@@ -16,6 +16,7 @@ interface ModalNewTaskProps {
   show: boolean;
   onClose: () => void;
   onCreate: (newTask: NewTask) => void;
+  projectSelected?: string | null;
 }
 
 /**
@@ -28,6 +29,7 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
   show,
   onClose,
   onCreate,
+  projectSelected = null,
 }: ModalNewTaskProps): JSX.Element | null => {
   const [projectId, setProjectId] = useState<string>("");
   const [taskTitle, setTaskTitle] = useState<string>("");
@@ -50,7 +52,7 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
    */
   useEffect(() => {
     if (show) {
-      setProjectId(projects[0].id);
+      setProjectId(projectSelected ?? projects[0].id);
       setDescription("");
       setAssignee(users[0].id.toString());
       setTaskTitle("");
@@ -134,23 +136,25 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
         />
         <h3 className="uk-modal-title">New Task</h3>
         <form onSubmit={handleCreate}>
-          <div className="uk-margin">
-            <label className="uk-form-label">Project</label>
-            <div className="uk-form-controls">
-              <select
-                className="uk-select"
-                value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
-                required
-              >
-                {projects.map((proj) => (
-                  <option key={`${proj.id}-${proj.title}`} value={proj.id}>
-                    {proj.title}
-                  </option>
-                ))}
-              </select>
+          {!projectSelected && (
+            <div className="uk-margin">
+              <label className="uk-form-label">Project</label>
+              <div className="uk-form-controls">
+                <select
+                  className="uk-select"
+                  value={projectId}
+                  onChange={(e) => setProjectId(e.target.value)}
+                  required
+                >
+                  {projects.map((proj) => (
+                    <option key={`${proj.id}-${proj.title}`} value={proj.id}>
+                      {proj.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
+          )}
           <div className="uk-margin">
             <label className="uk-form-label">Title</label>
             <div className="uk-form-controls">

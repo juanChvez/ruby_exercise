@@ -49,7 +49,7 @@ const TaskCard = ({
       className="uk-card uk-card-hover uk-box-shadow-small uk-margin-small-bottom"
     >
       <div className="uk-card uk-card-body uk-padding-small">
-        <p className="uk-margin-remove-bottom uk-text-bold">{task.title}</p>
+        <p className="uk-margin-remove-bottom uk-text-bold uk-text-break">{task.title}</p>
         <p className="uk-text-meta uk-margin-remove uk-text-small">
           {task.description}
         </p>
