@@ -10,7 +10,6 @@ module Queries
       argument :email, String, required: false
 
       def resolve(name: nil, email: nil)
-        require_authentication!(context)
         require_admin!(context)
         users = User.all
         # Filter by name if provided

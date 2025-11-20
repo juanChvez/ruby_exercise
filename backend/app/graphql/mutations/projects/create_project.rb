@@ -7,14 +7,13 @@ module Mutations
       argument :name, String, required: true
       argument :description, String, required: false
 
-      field :project, Types::Projects::ProjectType, null: true
+      field :project, Types::Projects::ProjectListItemType, null: true
       field :errors, [String], null: false
 
       def resolve(name:, description: nil)
-        user = require_authentication!(context)
-        require_admin!(context)
+        user = require_admin!(context)
 
-        project = user.projects.new(name: name, description: description)
+        project = user.projects.build(name:, description:)
 
         if project.save
           {project: project, errors: []}

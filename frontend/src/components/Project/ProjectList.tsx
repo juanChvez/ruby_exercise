@@ -12,7 +12,7 @@ import { type ProjectListItem } from "../../types/Project";
  * ProjectsList component
  *
  * Renders a searchable list of projects. Users can filter projects by title or description.
- * Project data is dummy data and should be replaced with backend/API data in production.
+ * Uses backend data for listing and enables project creation via modal.
  *
  * @component
  * @returns {JSX.Element} The rendered Projects list UI.
@@ -20,8 +20,11 @@ import { type ProjectListItem } from "../../types/Project";
 const ProjectsList: React.FC = (): JSX.Element => {
   /** Search term controlled by user input */
   const [searchTerm, setSearchTerm] = useState("");
+  /** Controls visibility of the new project modal */
   const [showModal, setShowModal] = useState(false);
+  /** Holds the list of projects fetched from the backend */
   const [projectsData, setProjectsData] = useState<ProjectListItem[]>([]);
+  /** setLoading - Shows loading indicator; setMessage - Sets a loading/status message */
   const { setLoading, setMessage } = useLoading();
 
   useEffect(() => {
@@ -29,11 +32,22 @@ const ProjectsList: React.FC = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-	const fetchProjectsList = async () => {
+  /**
+   * Fetches the project list from the backend and updates component state.
+   * Handles loading state and error messaging.
+   *
+   * @async
+   * @function
+   * @returns {Promise<void>}
+   */
+  const fetchProjectsList = async () => {
     setLoading(true);
     setMessage("Fetching project list...");
     try {
-			await projectService.getListProjects().then(setProjectsData).catch(console.error);
+      await projectService
+        .getListProjects()
+        .then(setProjectsData)
+        .catch(console.error);
     } catch (error) {
       setMessage("Failed to fetch project list.");
     } finally {
@@ -43,8 +57,44 @@ const ProjectsList: React.FC = (): JSX.Element => {
   };
 
   /**
-   * Filter projects based on the current search term.
+   * Attempts to create a new project and prepend it to the project list state if successful.
+   * Handles loading state and error messaging.
+   *
+   * @async
+   * @function
+   * @param {string} name - Name of the project
+   * @param {string} description - Description of the project
+   */
+  const saveProject = async (name: string, description: string) => {
+    setLoading(true);
+    setMessage("Creating project...");
+    try {
+      const { project, errors } = await projectService.createProject({
+        name,
+        description,
+      });
+      if (project) {
+        setProjectsData((prev) => [project, ...prev]);
+      } else if (errors.length > 0) {
+        setMessage(`Failed to create project: ${errors.join(", ")}`);
+      } else {
+        setMessage("Failed to create project. Unknown error.");
+      }
+    } catch (error) {
+      setMessage("Failed to create project.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+      setMessage(undefined);
+    }
+  };
+
+  /**
+   * Returns projects filtered by the current search term.
    * The filter matches the search term against project titles and descriptions.
+   *
+   * @constant
+   * @type {ProjectListItem[]}
    */
   const filteredProjects = projectsData.filter(
     (project) =>
@@ -81,7 +131,7 @@ const ProjectsList: React.FC = (): JSX.Element => {
         <ModalNewProject
           show={showModal}
           onClose={() => setShowModal(false)}
-          onCreate={() => setShowModal(false)}
+          onCreate={saveProject}
         />
       )}
 

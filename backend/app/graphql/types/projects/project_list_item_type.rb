@@ -20,7 +20,7 @@ module Types
       end
   
       def date
-        object.created_at.iso8601
+        object.created_at.strftime("%d/%m/%Y")
       end
     end
 

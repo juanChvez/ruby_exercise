@@ -3,7 +3,7 @@ import React, { useState, useEffect, type JSX } from "react";
 interface ModalNewProjectProps {
   show: boolean;
   onClose: () => void;
-  onCreate: (project: { name: string; description: string }) => void;
+  onCreate: (name: string, description: string) => void;
 }
 
 /**
@@ -33,7 +33,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim() === "") return;
-    onCreate({ name, description });
+    onCreate(name, description);
     onClose();
   };
 

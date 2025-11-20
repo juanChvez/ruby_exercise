@@ -8,7 +8,7 @@ module Mixins
 
     def require_admin!(context)
       user = require_authentication!(context)
-      raise GraphQL::ExecutionError, "Admin only" unless user.level == "admin"
+      raise GraphQL::ExecutionError, "Admin only" unless user.level_admin?
       user
     end
   end

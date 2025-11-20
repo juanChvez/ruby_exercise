@@ -15,8 +15,7 @@ module Mutations
       field :errors, [String], null: false
 
       def resolve(id:, **args)
-        user = require_authentication!(context)
-        require_admin!(context)
+        user = require_admin!(context)
 
         task = Task.joins(project: :user)
           .where(projects: {user_id: user.id})
