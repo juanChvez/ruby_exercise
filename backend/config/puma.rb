@@ -40,3 +40,19 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+# ========================================
+# PRODUCTION SETTINGS
+# ========================================
+if ENV['RAILS_ENV'] == 'production'
+  # Workers solo en producción
+  workers ENV.fetch("WEB_CONCURRENCY", 2)
+  
+  # Preload app para mejor uso de memoria
+  preload_app!
+  
+  # Reconectar a la DB después de hacer fork de workers
+  on_worker_boot do
+    ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+  end
+end
