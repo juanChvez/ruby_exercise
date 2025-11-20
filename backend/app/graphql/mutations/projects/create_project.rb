@@ -7,7 +7,7 @@ module Mutations
       argument :name, String, required: true
       argument :description, String, required: false
 
-      field :project, Types::ProjectType, null: true
+      field :project, Types::Projects::ProjectType, null: true
       field :errors, [String], null: false
 
       def resolve(name:, description: nil)

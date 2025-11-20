@@ -7,7 +7,12 @@ module Queries
       type GraphQL::Types::JSON, null: false
 
       def resolve
-        Services::Projects::DashboardFetcher.call(context[:current_user])
+        user = require_authentication!(context)
+        if user.level_admin?
+          Services::Projects::DashboardFetcherAdmin.call(user)
+        else
+          Services::Projects::DashboardFetcherUser.call(user)
+        end
       rescue => e
         raise GraphQL::ExecutionError, "Error al obtener datos del dashboard: #{e.message}"
       end

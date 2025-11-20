@@ -11,7 +11,7 @@ module Mutations
       argument :assignee_type, String, required: false
       argument :assignee_id, ID, required: false
 
-      field :task, Types::TaskType, null: true
+      field :task, Types::Tasks::TaskType, null: true
       field :errors, [String], null: false
 
       def resolve(id:, **args)

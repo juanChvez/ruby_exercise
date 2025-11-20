@@ -5,7 +5,7 @@ module Queries
       include Mixins::Authorization
 
       argument :project_id, ID, required: false
-      type [Types::TaskType], null: false
+      type [Types::Tasks::TaskType], null: false
 
       def resolve(project_id: nil)
         user = require_authentication!(context)

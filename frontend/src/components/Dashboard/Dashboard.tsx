@@ -1,7 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 
 import type { DashboardData } from "../../types/Dashboard";
-import { getDashboard, emptyState } from "../../services/dashboardService";
+import { dashboardService, emptyState } from "../../services/dashboardService";
 
 import StateCard from "./StateCard";
 import StatusPanel from "./StatusPanel";
@@ -35,7 +35,7 @@ const Dashboard = (): JSX.Element => {
     setLoading(true);
     setMessage("Fetching dashboard data...");
     try {
-      await getDashboard().then(setDashboardData).catch(console.error);
+      await dashboardService.getDashboard().then(setDashboardData).catch(console.error);
     } catch (error) {
       setMessage("Failed to fetch dashboard data.");
     } finally {

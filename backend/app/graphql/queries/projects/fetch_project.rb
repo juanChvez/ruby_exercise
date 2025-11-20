@@ -5,7 +5,7 @@ module Queries
       include Mixins::Authorization
 
       argument :id, ID, required: true
-      type Types::ProjectType, null: true
+      type Types::Projects::ProjectType, null: true
 
       def resolve(id:)
         user = require_authentication!(context)

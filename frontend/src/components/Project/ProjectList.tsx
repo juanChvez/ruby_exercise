@@ -1,35 +1,12 @@
-import { useState, type JSX } from "react";
+import { useState, useEffect, type JSX } from "react";
+
 import ListItem from "./ListItem";
 import ModalNewProject from "./ModalNewProject";
 
-/**
- * Dummy project data for demonstration purposes.
- * Each object represents a project with basic info and a unique ID.
- * In a real application, replace this with data from an API or state management.
- */
-const projectsData = [
-  {
-    id: 1,
-    title: "DevHub MVP",
-    description: "Build the initial version of the project management platform",
-    tasks: 12,
-    date: "19/11/2025",
-  },
-  {
-    id: 2,
-    title: "API Development",
-    description: "Create RESTful API endpoints for all core features",
-    tasks: 8,
-    date: "19/11/2025",
-  },
-  {
-    id: 3,
-    title: "UI Component Library",
-    description: "Design and implement reusable React components",
-    tasks: 15,
-    date: "19/11/2025",
-  },
-];
+import { projectService } from "../../services";
+
+import { useLoading } from "../../context";
+import { type ProjectListItem } from "../../types/Project";
 
 /**
  * ProjectsList component
@@ -44,6 +21,26 @@ const ProjectsList: React.FC = (): JSX.Element => {
   /** Search term controlled by user input */
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [projectsData, setProjectsData] = useState<ProjectListItem[]>([]);
+  const { setLoading, setMessage } = useLoading();
+
+  useEffect(() => {
+    fetchProjectsList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+	const fetchProjectsList = async () => {
+    setLoading(true);
+    setMessage("Fetching project list...");
+    try {
+			await projectService.getListProjects().then(setProjectsData).catch(console.error);
+    } catch (error) {
+      setMessage("Failed to fetch project list.");
+    } finally {
+      setLoading(false);
+      setMessage(undefined);
+    }
+  };
 
   /**
    * Filter projects based on the current search term.

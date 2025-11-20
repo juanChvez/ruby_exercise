@@ -12,7 +12,7 @@ module Mutations
       argument :password_confirmation, String, required: false
 
       # The return type of the mutation
-      field :user, Types::UserType, null: true
+      field :user, Types::Users::UserType, null: true
       field :errors, [String], null: false
 
       def resolve(id:, name: nil, email: nil, current_password: nil, password: nil, password_confirmation: nil)

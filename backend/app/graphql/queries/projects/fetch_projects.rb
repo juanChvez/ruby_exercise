@@ -4,11 +4,18 @@ module Queries
       description "Fetches all projects for the authenticated user, ordered by most recently created first."
       include Mixins::Authorization
 
-      type [Types::ProjectType], null: false
+      type [Types::Projects::ProjectListItemType], null: false
 
       def resolve
         user = require_authentication!(context)
-        user.projects.order(created_at: :desc)
+        if user.level_admin?
+          user.projects.order(created_at: :desc)
+        else
+          Project.joins(:tasks)
+            .where(tasks: {assignee_id: user.id})
+            .distinct
+            .order(created_at: :desc)
+        end
       end
     end
   end

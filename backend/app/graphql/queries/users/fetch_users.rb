@@ -1,7 +1,7 @@
 module Queries
   module Users
     class FetchUsers < BaseQuery
-      type [Types::UserType], null: false
+      type [Types::Users::UserType], null: false
       description "Returns all users. You can optionally filter by name and/or email. Performs a case-insensitive search."
       include Mixins::Authorization
 
