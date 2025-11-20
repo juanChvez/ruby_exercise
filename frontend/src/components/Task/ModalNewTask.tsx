@@ -80,7 +80,7 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
       description,
       status,
       assignee,
-      createdDate
+      date: createdDate
     };
     onCreate(newTask);
     onClose();

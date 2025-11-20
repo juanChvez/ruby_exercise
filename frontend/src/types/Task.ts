@@ -60,16 +60,15 @@ export type TaskActivity = {
  * @property {string} taskTitle - The full title of the task.
  * @property {string} description - Detailed description of the task.
  * @property {TaskStatus} status - Current status of the task.
- * @property {string} assignee - Name of the person assigned to the task.
- * @property {string} createdDate - When the task was created (display string or ISO).
- * @property {TaskActivity[]} activity - Chronological list of activity events for the task.
+ * @property {string} assigned - Name of the person assigned to the task.
+ * @property {string} date - When the task was created (display string or ISO).
  */
 export type TaskDetails = {
     projectTitle: string;
     taskTitle: string;
     description: string;
     status: TaskStatus;
-    assignee: string;
-    createdDate: string;
+    assigned: string;
+    date: string;
     activity: TaskActivity[];
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, type JSX } from "react";
 import { type TaskDetails, type TaskStatus } from "../../types/Task";
 
 /**
@@ -34,14 +34,14 @@ const ModalEdit: React.FC<ModalEditProps> = ({
   onClose,
   task,
   onSave,
-}) => {
+}: ModalEditProps): JSX.Element | null => {
   /**
    * Local state for the editable fields: title, description, status, assignee.
    */
-  const [taskTitle, setTaskTitle] = useState<string>(task.taskTitle);
-  const [description, setDescription] = useState<string>(task.description);
-  const [status, setStatus] = useState<TaskStatus>(task.status);
-  const [assignee, setAssignee] = useState<string>(task.assignee);
+  const [taskTitle, setTaskTitle] = useState<string>(task?.taskTitle);
+  const [description, setDescription] = useState<string>(task?.description);
+  const [status, setStatus] = useState<TaskStatus>(task?.status);
+  const [assignee, setAssignee] = useState<string>(task?.assigned);
 
   /**
    * Handle saving the updated task.
@@ -55,7 +55,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({
       taskTitle,
       description,
       status,
-      assignee,
+      assigned: assignee,
     };
     onSave(updatedTask);
     onClose();

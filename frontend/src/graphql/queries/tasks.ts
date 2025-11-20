@@ -15,3 +15,21 @@ export const GET_TASK_LIST = gql`
     }
   }
 `;
+
+/**
+ * GraphQL query to retrieve a single task by ID.
+ */
+export const GET_TASK = gql`
+  query GetTask($id: ID!) {
+    task(id: $id) {
+      id
+      title
+      description
+      status
+      date
+      projectTitle
+      assigned
+    }
+  }
+`;
+

@@ -1,42 +1,11 @@
-import React, { useState, type JSX } from "react";
+import React, { useState, useEffect, type JSX } from "react";
+import { useParams } from "react-router-dom";
 import { type TaskDetails } from "../../types/Task";
 import { getStatusLabel } from "./TaskCard";
-import ActivityCard from "./ActivityCard";
+//import ActivityCard from "./ActivityCard";
 import ModalEdit from "./ModalEdit";
-
-/**
- * Example task details for demonstration or preview purposes.
- * @type {TaskDetails}
- */
-const initialTaskDetails: TaskDetails = {
-  projectTitle: "DevHub MVP",
-  taskTitle: "Design database schema",
-  description:
-    "Create ER diagrams and define all tables and relationships for the project management system",
-  status: "IN_PROGRESS",
-  assignee: "Jane Smith",
-  createdDate: "18/11/2025",
-  activity: [
-    {
-      user: "John Doe",
-      time: "2h ago",
-      text: "Changed status from To Do to In Progress",
-      type: "status",
-    },
-    {
-      user: "Jane Smith",
-      time: "5h ago",
-      text: "Added a comment: Working on the database schema design",
-      type: "comment",
-    },
-    {
-      user: "John Doe",
-      time: "1d ago",
-      text: "Created the task",
-      type: "creation",
-    },
-  ],
-};
+import { tasksService } from "../../services";
+import { useLoading } from "../../context";
 
 /**
  * Component displaying the details of a task and its activity.
@@ -48,17 +17,16 @@ const initialTaskDetails: TaskDetails = {
  * <TaskOverview />
  */
 const TaskOverview: React.FC = (): JSX.Element => {
-  /**
-   * State for handling the visibility of the edit modal.
-   * @type {[boolean, Function]}
-   */
+  const { id } = useParams<{ id: string }>();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [taskDetails, setTaskDetails] = useState<TaskDetails | null>(null);
+  const { setLoading, setMessage } = useLoading();
 
-  /**
-   * State for the details of the current task.
-   * @type {[TaskDetails, Function]}
-   */
-  const [taskDetails, setTaskDetails] = useState<TaskDetails>(initialTaskDetails);
+  useEffect(() => {
+    if (!id) return;
+
+    fetchTaskInfo(id);
+  }, [id]);
 
   /**
    * Opens the edit modal dialog.
@@ -81,11 +49,27 @@ const TaskOverview: React.FC = (): JSX.Element => {
   /**
    * Updates the task details after editing and saves the update.
    * @function
-   * @param {TaskDetails} updatedTask - The updated task data.
+   * @param {Task} updatedTask - The updated task data.
    * @returns {void}
    */
   const handleEditSave = (updatedTask: TaskDetails): void => {
     setTaskDetails(updatedTask);
+  };
+
+  // Function to fetch single task info using tasksService
+  const fetchTaskInfo = async (taskId: string) => {
+    setLoading(true);
+    setMessage("Loading task details...");
+    try {
+      const task = await tasksService.getTask(taskId);
+      setTaskDetails(task);
+    } catch (error) {
+      setMessage("Failed to load task details");
+      setTaskDetails(null);
+    } finally {
+      setLoading(false);
+      setMessage(undefined);
+    }
   };
 
   return (
@@ -94,16 +78,16 @@ const TaskOverview: React.FC = (): JSX.Element => {
       <ModalEdit
         show={showEditModal}
         onClose={handleEditClose}
-        task={taskDetails}
+        task={taskDetails!}
         onSave={handleEditSave}
       />
       {/* Project Title */}
       <p className="uk-text-meta uk-margin-remove">
-        {taskDetails.projectTitle}
+        {taskDetails?.projectTitle}
       </p>
       {/* Task Title and Edit Button */}
       <div className="uk-flex uk-flex-middle uk-flex-between">
-        <h2 className="uk-margin-remove-top">{taskDetails.taskTitle}</h2>
+        <h2 className="uk-margin-remove-top">{taskDetails?.projectTitle}</h2>
         <button
           className="uk-button uk-background-secondary uk-button-small"
           type="button"
@@ -116,7 +100,7 @@ const TaskOverview: React.FC = (): JSX.Element => {
       {/* Task Description */}
       <div className="uk-margin-top">
         <strong>Description:</strong>
-        <p className="uk-margin-remove">{taskDetails.description}</p>
+        <p className="uk-margin-remove">{taskDetails?.description}</p>
       </div>
       {/* Task Meta Information */}
       <div
@@ -125,8 +109,12 @@ const TaskOverview: React.FC = (): JSX.Element => {
       >
         {/* Task Status */}
         <div>
-          <span className={`uk-label uk-padding-xsmall ${getStatusLabel(taskDetails.status)}`}>
-            {taskDetails.status}
+          <span
+            className={`uk-label uk-padding-xsmall ${getStatusLabel(
+              taskDetails?.status ?? "TODO"
+            )}`}
+          >
+            {taskDetails?.status}
           </span>
         </div>
         {/* Assignee */}
@@ -135,7 +123,7 @@ const TaskOverview: React.FC = (): JSX.Element => {
             className="uk-icon uk-margin-small-right"
             data-uk-icon="icon: user"
           ></span>
-          <strong>Assignee:</strong> {taskDetails.assignee}
+          <strong>Assignee:</strong> {taskDetails?.assigned}
         </div>
         {/* Created Date */}
         <div>
@@ -143,29 +131,23 @@ const TaskOverview: React.FC = (): JSX.Element => {
             className="uk-icon uk-margin-small-right"
             data-uk-icon="icon: calendar"
           ></span>
-          <strong>Created:</strong> {taskDetails.createdDate}
+          <strong>Created:</strong> {taskDetails?.date}
         </div>
       </div>
       {/* Activity Log */}
-      <div className="uk-margin-large-top">
+      {/* TODO: adjust activities */}
+      {/* <div className="uk-margin-large-top">
         <h4>Activity</h4>
         <ul className="uk-list uk-list-divider">
           {taskDetails.activity.map(
-            /**
-             * Render an activity item for the activity log.
-             * @param {any} act - Activity log item object.
-             * @param {number} idx - Index of the activity.
-             * @returns {JSX.Element}
-             */
             (act, idx) => (
               <li key={idx}>
-                {/* Activity log card */}
                 <ActivityCard activity={act} />
               </li>
             )
           )}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

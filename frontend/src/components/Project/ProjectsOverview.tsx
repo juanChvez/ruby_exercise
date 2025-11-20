@@ -9,15 +9,15 @@ import { useLoading } from "../../context";
 
 /**
  * ProjectsOverview Component
- * 
+ *
  * Renders an overview page for a project, including:
  *   - Project title and description at the top
  *   - A button to create a new task
  *   - A 3-column Kanban view for project tasks (Todo, In Progress, Done)
- * 
+ *
  * The Kanban columns adjust for mobile using the useIsMobile hook.
  * Each task is displayed as a TaskCard component.
- * 
+ *
  * @component
  * @returns {JSX.Element} A project overview and kanban board.
  */
@@ -30,22 +30,22 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (!id) return;
-    
+
     fetchProject();
   }, [id]);
-  
+
   const fetchProject = async () => {
-      setLoading(true);
-      setMessage("Loading project data...");
-      try {
-        const data = await projectService.getProject(id || '');
-        setProject(data);
-      } catch (err) {
-        setMessage("Failed to load project data.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    setMessage("Loading project data...");
+    try {
+      const data = await projectService.getProject(id || "");
+      setProject(data);
+    } catch (err) {
+      setMessage("Failed to load project data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="uk-container uk-margin-top uk-width-1-1">
@@ -60,7 +60,9 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
           ></Link>
           <div>
             <h1 className="uk-margin-remove">{project?.title}</h1>
-            <p className="uk-text-meta uk-margin-remove">{project?.description}</p>
+            <p className="uk-text-meta uk-margin-remove">
+              {project?.description}
+            </p>
           </div>
         </div>
         {/* Create Task Button */}
@@ -95,7 +97,10 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
         {/* Column 1: To Do */}
         <div className="uk-width-1-1 uk-width-1-3@m uk-flex uk-flex-column">
           <h3 className="uk-h4 uk-margin-remove-bottom">
-            To Do <span className="uk-text-meta">{project?.tasks.todo.length ?? 0}</span>
+            To Do{" "}
+            <span className="uk-text-meta">
+              {project?.tasks.todo.length ?? 0}
+            </span>
           </h3>
           <hr className="uk-margin-small-top" />
           {project?.tasks.todo.map((task) => (
@@ -106,7 +111,10 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
         {/* Column 2: In Progress */}
         <div className="uk-width-1-1 uk-width-1-3@m uk-flex uk-flex-column">
           <h3 className="uk-h4 uk-margin-remove-bottom">
-            In Progress <span className="uk-text-meta">{project?.tasks.inProgress.length ?? 0}</span>
+            In Progress{" "}
+            <span className="uk-text-meta">
+              {project?.tasks.inProgress.length ?? 0}
+            </span>
           </h3>
           <hr className="uk-margin-small-top" />
           {project?.tasks.inProgress.map((task) => (
@@ -117,7 +125,10 @@ const ProjectsOverview: React.FC = (): JSX.Element => {
         {/* Column 3: Done */}
         <div className="uk-width-1-1 uk-width-1-3@m uk-flex uk-flex-column">
           <h3 className="uk-h4 uk-margin-remove-bottom">
-            Done <span className="uk-text-meta">{project?.tasks.done.length ?? 0}</span>
+            Done{" "}
+            <span className="uk-text-meta">
+              {project?.tasks.done.length ?? 0}
+            </span>
           </h3>
           <hr className="uk-margin-small-top" />
           {project?.tasks.done.map((task) => (

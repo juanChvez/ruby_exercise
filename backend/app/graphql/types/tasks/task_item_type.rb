@@ -7,6 +7,11 @@ module Types
       field :status, String, null: false
       field :date, String, null: false
       field :assigned, String, null: true
+      field :project_title, String, null: true
+
+      def project_title
+        object.project.name
+      end
 
       def date
         object.created_at.strftime("%d/%m/%Y")
