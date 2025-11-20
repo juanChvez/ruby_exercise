@@ -1,89 +1,119 @@
-import React, { useState, type JSX } from "react";
-import { type TaskStatus } from "../../types/Task";
+import React, { useState, useEffect, type JSX } from "react";
+import { type NewTask } from "../../types/Task";
+import { type ProjectSelectItem } from "../../types/Project";
+import { type UserSelectItem } from "../../types/User";
+import { projectService, userService } from "../../services";
 
 /**
  * Props for the ModalNewTask component.
- * @interface ModalNewTaskProps
+ * @typedef {Object} ModalNewTaskProps
  * @property {boolean} show - Whether the modal is visible.
  * @property {() => void} onClose - Callback function to close the modal.
- * @property {(task: TaskDetails) => void} onCreate - Callback function called when a new task is created.
- * @property {string} [project] - (optional) The project title to set for the new task (removes select if provided)
+ * @property {(newTask: NewTask) => void} onCreate - Callback called when a new task is created.
+ * @property {string} [project] - (Optional) The project title to set for the new task (removes select if provided)
  */
 interface ModalNewTaskProps {
   show: boolean;
   onClose: () => void;
-  onCreate: (task: any) => void;
-  project?: string;
+  onCreate: (newTask: NewTask) => void;
 }
-
-const statusOptions: TaskStatus[] = ["TODO", "IN_PROGRESS", "DONE"];
-const projectOptions: string[] = [
-  "DevHub MVP",
-  "Marketing Website",
-  "Mobile App",
-  "Internal Tool"
-];
-
-const assigneeOptions: string[] = [
-  "Jane Smith",
-  "John Doe",
-  "Alice Lee",
-  "Maria Garcia"
-];
 
 /**
  * ModalNewTask allows users to create a new task in a modal dialog.
  *
- * @component
  * @param {ModalNewTaskProps} props - The props for the ModalNewTask component.
- * @returns {JSX.Element|null} The rendered new task modal or null if not visible.
+ * @returns {JSX.Element | null} The rendered new task modal or null if not visible.
  */
 const ModalNewTask: React.FC<ModalNewTaskProps> = ({
   show,
   onClose,
   onCreate,
-  project,
 }: ModalNewTaskProps): JSX.Element | null => {
-  // Use received project prop if provided, otherwise use projectOptions[0].
-  const [projectTitle, setProjectTitle] = useState<string>(project || projectOptions[0] || "");
+  const [projectId, setProjectId] = useState<string>("");
   const [taskTitle, setTaskTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [status, setStatus] = useState<TaskStatus>("TODO");
-  const [assignee, setAssignee] = useState<string>(assigneeOptions[0] || "");
+  const [assignee, setAssignee] = useState<string>("");
+
+  // State for projects using ProjectSelectItem[]
+  const [projects, setProjects] = useState<ProjectSelectItem[]>([]);
+  const [users, setUsers] = useState<UserSelectItem[]>([]);
+
+  useEffect(() => {
+    getProjects();
+    getUsers();
+  }, []);
 
   /**
    * Reset form fields when the modal is shown.
+   *
+   * @returns {void}
    */
-  React.useEffect(() => {
+  useEffect(() => {
     if (show) {
-      setProjectTitle(project || projectOptions[0] || "");
+      setProjectId(projects[0].id);
+      setDescription("");
+      setAssignee(users[0].id.toString());
       setTaskTitle("");
       setDescription("");
-      setStatus("TODO");
-      setAssignee(assigneeOptions[0] || "");
     }
-    // Only reset on show/project change
     // eslint-disable-next-line
-  }, [show, project]);
+  }, [show]);
 
   /**
    * Handle the "Create" action for the task.
    *
    * @param {React.FormEvent} e - The form submission event.
+   * @returns {void}
    */
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent): void => {
     e.preventDefault();
-    const createdDate = new Date().toLocaleDateString();
-    const newTask = {
-      projectTitle,
-      taskTitle,
+    const newTask: NewTask = {
+      title: taskTitle,
       description,
-      status,
-      assignee,
-      date: createdDate
+      projectId: parseInt(projectId),
+      assigneeType: "User",
+      assigneeId: parseInt(assignee),
     };
     onCreate(newTask);
     onClose();
+  };
+
+  /**
+   * Asynchronously fetches the list of projects for selection and updates state.
+   *
+   * Uses the projectService to retrieve the available projects and sets the local state.
+   * Logs errors in case the fetch fails and resets the projects state to an empty array.
+   *
+   * @returns {Promise<void>}
+   */
+  const getProjects = async (): Promise<void> => {
+    try {
+      // Use projectService to fetch the list of projects for selection
+      const projects = await projectService.getProjectsSelect();
+      setProjects(projects);
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+      setProjects([]);
+    }
+  };
+
+  /**
+   * Asynchronously fetches the list of users for selection and updates state.
+   *
+   * Uses the userService to retrieve available users and sets the local state.
+   * Logs errors if the fetch fails and resets the assignee options to an empty array.
+   *
+   * @returns {Promise<void>}
+   */
+  const getUsers = async (): Promise<void> => {
+    try {
+      // Use userService to fetch the list of users for selection
+      const users = await userService.getUsersSelect();
+      setUsers(users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      setUsers([]);
+    }
   };
 
   if (!show) return null;
@@ -107,29 +137,18 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
           <div className="uk-margin">
             <label className="uk-form-label">Project</label>
             <div className="uk-form-controls">
-              {project ? (
-                <input
-                  className="uk-input"
-                  type="text"
-                  value={project}
-                  readOnly
-                  disabled
-                  style={{ backgroundColor: "#f5f5f5" }}
-                />
-              ) : (
-                <select
-                  className="uk-select"
-                  value={projectTitle}
-                  onChange={e => setProjectTitle(e.target.value)}
-                  required
-                >
-                  {projectOptions.map((proj) => (
-                    <option key={proj} value={proj}>
-                      {proj}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <select
+                className="uk-select"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                required
+              >
+                {projects.map((proj) => (
+                  <option key={`${proj.id}-${proj.title}`} value={proj.id}>
+                    {proj.title}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="uk-margin">
@@ -139,7 +158,7 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
                 className="uk-input"
                 type="text"
                 value={taskTitle}
-                onChange={e => setTaskTitle(e.target.value)}
+                onChange={(e) => setTaskTitle(e.target.value)}
                 required
               />
             </div>
@@ -150,28 +169,9 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
               <textarea
                 className="uk-textarea"
                 value={description}
-                onChange={e => setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
-            </div>
-          </div>
-          <div className="uk-margin">
-            <label className="uk-form-label">Status</label>
-            <div className="uk-form-controls">
-              <select
-                className="uk-select"
-                value={status}
-                onChange={e => setStatus(e.target.value as TaskStatus)}
-              >
-                {statusOptions.map(opt => (
-                  <option key={opt} value={opt}>
-                    {opt
-                      .replace("TODO", "To Do")
-                      .replace("IN_PROGRESS", "In Progress")
-                      .replace("DONE", "Done")}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
           <div className="uk-margin">
@@ -180,12 +180,12 @@ const ModalNewTask: React.FC<ModalNewTaskProps> = ({
               <select
                 className="uk-select"
                 value={assignee}
-                onChange={e => setAssignee(e.target.value)}
+                onChange={(e) => setAssignee(e.target.value)}
                 required
               >
-                {assigneeOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option}
+                {users.map((option) => (
+                  <option key={`${option.id}-${option.name}`} value={option.id}>
+                    {option.name}
                   </option>
                 ))}
               </select>

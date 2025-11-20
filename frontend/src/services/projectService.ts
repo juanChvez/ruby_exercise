@@ -1,7 +1,15 @@
 import client from "../apollo";
-import { PROJECT_LIST, GET_PROJECT } from "../graphql/queries/projects";
+import {
+  PROJECT_LIST,
+  GET_PROJECT,
+  GET_PROJECTS_SELECT,
+} from "../graphql/queries/projects";
 import { CREATE_PROJECT } from "../graphql/mutations/projects";
-import { type ProjectListItem, type Project } from "../types/Project";
+import {
+  type ProjectListItem,
+  type Project,
+  type ProjectSelectItem,
+} from "../types/Project";
 
 /**
  * Service for managing project-related API operations.
@@ -82,6 +90,27 @@ export const projectService = {
       );
     } catch (error) {
       console.error("Failed to create project:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Retrieves a list of projects with id and title for selection menus.
+   *
+   * @returns {Promise<Array<ProjectSelectItem>>} The list of projects for select inputs.
+   * @throws {Error} If unable to fetch the project list.
+   */
+  getProjectsSelect: async (): Promise<Array<ProjectSelectItem>> => {
+    try {
+      const { data } = await client.query<{
+        projects: Array<ProjectSelectItem>;
+      }>({
+        query: GET_PROJECTS_SELECT,
+        fetchPolicy: "network-only",
+      });
+      return data?.projects!;
+    } catch (error) {
+      console.error("Failed to get project list for select:", error);
       throw error;
     }
   },

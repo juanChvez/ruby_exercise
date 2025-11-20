@@ -57,3 +57,18 @@ export const GET_PROJECT = gql`
     }
   }
 `;
+
+/**
+ * This file defines GraphQL queries related to projects,
+ * including queries for listing projects and retrieving
+ * detailed information about a specific project, along 
+ * with their categorized tasks.
+ */
+export const GET_PROJECTS_SELECT = gql`
+  query GetProjects {
+    projects {
+      id
+      title
+    }
+  }
+`;

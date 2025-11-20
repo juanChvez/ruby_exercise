@@ -11,7 +11,7 @@ module Queries
 
       def resolve(name: nil, email: nil)
         require_admin!(context)
-        users = User.all
+        users = User.where.not(level: 'admin')
         # Filter by name if provided
         users = users.where("name ILIKE ?", "%#{name}%") if name.present?
         # Filter by email if provided

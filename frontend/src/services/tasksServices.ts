@@ -1,6 +1,7 @@
 import client from "../apollo";
 import { GET_TASK_LIST, GET_TASK } from "../graphql/queries/tasks";
-import { type Task, type TaskDetails } from "../types/Task";
+import { CREATE_TASK } from "../graphql/mutations/tasks";
+import type { Task, TaskDetails, NewTask } from "../types/Task";
 
 /**
  * Service for managing task-related API operations.
@@ -18,7 +19,7 @@ export const tasksService = {
     try {
       const { data } = await client.query<{ tasks: Task[] }>({
         query: GET_TASK_LIST,
-        fetchPolicy: "network-only"
+        fetchPolicy: "network-only",
       });
       return data?.tasks ?? [];
     } catch (error) {
@@ -39,11 +40,31 @@ export const tasksService = {
       const { data } = await client.query<{ task: TaskDetails }>({
         query: GET_TASK,
         variables: { id },
-        fetchPolicy: "network-only"
+        fetchPolicy: "network-only",
       });
       return data?.task ?? null;
     } catch (error) {
       console.error("Failed to get task:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Creates a new task using the GraphQL mutation.
+   *
+   * @param {object} newTask - The new task data for creation.
+   * @returns {Promise<any>} The created task, or error if failed.
+   * @throws {Error} If unable to create the task.
+   */
+  createTask: async (newTask: NewTask): Promise<Task | null> => {
+    try {
+      const { data } = await client.mutate<{ createTask: { task: Task } }>({
+        mutation: CREATE_TASK,
+        variables: newTask,
+      });
+      return data?.createTask?.task ?? null;
+    } catch (error) {
+      console.error("Failed to create task:", error);
       throw error;
     }
   },

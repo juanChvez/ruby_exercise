@@ -33,3 +33,14 @@ export type Project = {
     date: string;
     tasks: GroupedTasks;
 };
+
+/**
+ * Represents a minimal project object used in select menus.
+ * @typedef {Object} ProjectSelectItem
+ * @property {string} id - Unique identifier for the project.
+ * @property {string} title - The name of the project.
+ */
+export type ProjectSelectItem = {
+    id: string;
+    title: string;
+};

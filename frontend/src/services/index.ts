@@ -29,3 +29,11 @@ export * from "./dashboardService";
  * @module Services/TasksService
  */
 export * from "./tasksServices";
+
+/**
+ * Re-exports all exports from the user service module.
+ * This enables user-related API utilities to be imported from a central location.
+ *
+ * @module Services/UserService
+ */
+export * from "./userService";

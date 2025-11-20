@@ -51,3 +51,13 @@ export interface UserResponse {
   token?: string;
   errors: string[];
 }
+
+/**
+ * Represent a selectable user option (e.g., for assignee dropdowns).
+ * @property {number} id - The user's unique identifier.
+ * @property {string} name - The user's display name.
+ */
+export type UserSelectItem = {
+  id: number;
+  name: string;
+};

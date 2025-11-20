@@ -9,12 +9,12 @@
  * @property {string} [assigned] - Name of the person assigned to the task (optional).
  */
 export type Task = {
-    id: number;
-    title: string;
-    description: string;
-    status: TaskStatus;
-    date: string;
-    assigned?: string;
+  id: number;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  date: string;
+  assigned?: string;
 };
 
 /**
@@ -27,10 +27,10 @@ export type Task = {
  * @property {Task[]} done - Tasks with status "DONE".
  */
 export type GroupedTasks = {
-    todo: Task[];
-    inProgress: Task[];
-    done: Task[];
-  };
+  todo: Task[];
+  inProgress: Task[];
+  done: Task[];
+};
 
 /**
  * The allowed status values for a task.
@@ -47,10 +47,10 @@ export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
  * @property {"status" | "comment" | "creation"} type - Type of activity event.
  */
 export type TaskActivity = {
-    user: string;
-    time: string;
-    text: string;
-    type: "status" | "comment" | "creation";
+  user: string;
+  time: string;
+  text: string;
+  type: "status" | "comment" | "creation";
 };
 
 /**
@@ -64,11 +64,27 @@ export type TaskActivity = {
  * @property {string} date - When the task was created (display string or ISO).
  */
 export type TaskDetails = {
-    projectTitle: string;
-    taskTitle: string;
-    description: string;
-    status: TaskStatus;
-    assigned: string;
-    date: string;
-    activity: TaskActivity[];
+  projectTitle: string;
+  taskTitle: string;
+  description: string;
+  status: TaskStatus;
+  assigned: string;
+  date: string;
+  activity: TaskActivity[];
+};
+
+/**
+ * Represents the payload for creating a new task.
+ * @typedef {Object} NewTask
+ * @property {string} title - The title of the new task.
+ * @property {string} description - The description of the new task.
+ * @property {number} assigneeId - The ID of the user assigned to the task.
+ * @property {string} assigneeType - The type of the assignee (e.g., "User").
+ */
+export type NewTask = {
+  title: string;
+  description: string;
+  projectId: string | number;
+  assigneeType: string;
+  assigneeId: string | number;
 };

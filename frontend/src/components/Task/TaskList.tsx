@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TaskCard from "./TaskCard";
-import type { Task } from "../../types/Task";
+import type { NewTask, Task } from "../../types/Task";
 import ModalNewTask from "./ModalNewTask";
 import { tasksService } from "../../services";
 import { useLoading } from "../../context";
@@ -30,10 +30,34 @@ const TaskList: React.FC = () => {
   // Handle closing the modal
   const handleCloseModal = () => setShowNewTaskModal(false);
 
-  // For now, this just closes the modal. In the future, you can add logic to update the task list.
-  const handleCreateTask = () => {
-    setShowNewTaskModal(false);
-    // Could add logic to insert into task list here
+  /**
+   * Creates a new task using the tasksService.
+   *
+   * @param {NewTask} newTask - The new task data to be created.
+   * @returns {Promise<Task | null>} The created task or null if failed.
+   */
+  const handleCreateTask = async (newTask: NewTask): Promise<Task | null> => {
+    setLoading(true);
+    setMessage("Creating new task...");
+    try {
+      const createdTask = await tasksService.createTask(newTask);
+      if (createdTask) {
+        setTasks((prevTasks) => [createdTask, ...prevTasks]);
+        setMessage("Task created successfully!");
+        return createdTask;
+      } else {
+        setMessage("Failed to create new task.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Failed to create new task:", error);
+      setMessage("Failed to create new task.");
+      return null;
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMessage(undefined), 1000);
+      setShowNewTaskModal(false);
+    }
   };
 
   /**
@@ -102,7 +126,10 @@ const TaskList: React.FC = () => {
 
       {/* --- Task List --- */}
       {filteredTasks.length > 0 ? (
-        <ul className="uk-list uk-list-large" style={{maxHeight: "60vh", overflow: "auto"}}>
+        <ul
+          className="uk-list uk-list-large"
+          style={{ maxHeight: "60vh", overflow: "auto" }}
+        >
           {filteredTasks.map((task) => (
             <TaskCard key={task.id} task={task} layout="compact" />
           ))}
