@@ -1,6 +1,6 @@
 import { type JSX, useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
-import { SidebarProvider, useLoading, useAuth } from "../context";
+import { SidebarProvider, useLoading } from "../context";
 import { authService } from "../services";
 import { type User } from "../types/User";
 
