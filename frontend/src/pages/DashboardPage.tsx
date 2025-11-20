@@ -3,7 +3,8 @@ import { Outlet } from "react-router-dom";
 
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
-import { SidebarProvider } from "../context";
+import { SidebarProvider, useAuth } from "../context";
+import { authService } from "../services";
 
 /**
  * Dashboard page component.
@@ -17,8 +18,19 @@ import { SidebarProvider } from "../context";
  * @component
  * @returns {JSX.Element} The Dashboard layout for authenticated users, including Navbar, Sidebar, and main content.
  */
-
 const DashboardPage: React.FC = (): JSX.Element => {
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const validateSession = async () => {
+      const valid = await authService.validateToken();
+      if (!valid) {
+        logout();
+      }
+    };
+    validateSession();
+  }, []);
+
   return (
     <SidebarProvider>
       {/* Navbar component at the top */}

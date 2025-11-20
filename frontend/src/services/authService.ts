@@ -1,5 +1,5 @@
 import client from "../apollo";
-import { GET_PROFILE } from "../graphql/queries/users";
+import { GET_PROFILE, VALIDATE_TOKEN } from "../graphql/queries/users";
 import { gql } from '@apollo/client';
 import type { User } from "../types/User";
 
@@ -60,4 +60,24 @@ export const authService = {
       throw error;
     }
   },
+
+  /**
+   * Validates the authentication token using the Apollo client.
+   * Returns true if token is valid, otherwise false.
+   * 
+   * @returns {Promise<boolean>} Resolved with token validity.
+   */
+  validateToken: async (): Promise<boolean> => {
+    try {
+      const { data } = await client.query<{ validate: { success: boolean; errors: string[] } }>({
+        query: VALIDATE_TOKEN,
+        fetchPolicy: "network-only",
+      });
+      return data?.validate.success!;
+    } catch (error) {
+      console.error("Error validating token:", error);
+      return false;
+    }
+  },
+
 };

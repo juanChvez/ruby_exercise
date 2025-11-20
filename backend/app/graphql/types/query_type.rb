@@ -5,6 +5,7 @@ module Types
     # Users
     field :users, resolver: Queries::Users::FetchUsers
     field :user, resolver: Queries::Users::FetchUser
+    field :validate, resolver: Queries::Users::ValidateToken
 
     # Projects
     field :projects, resolver: Queries::Projects::FetchProjects

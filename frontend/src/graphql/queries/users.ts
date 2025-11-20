@@ -26,3 +26,10 @@ query GetProfileCamelCase {
   }
 }
 `;
+
+// GraphQL query for validating the authentication token
+export const VALIDATE_TOKEN = gql`
+  query ValidateToken {
+    validate
+  }
+`;
