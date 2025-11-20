@@ -2,19 +2,23 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
   host: <%= ENV.fetch("DATABASE_HOST") { "db" } %>
   port: <%= ENV.fetch("DATABASE_PORT") { 5432 } %>
   username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { "password" } %>
-
-development:
-  <<: *default
   database: <%= ENV.fetch("POSTGRES_DB") { "myapp_development" } %>
 
 test:
   <<: *default
+  host: <%= ENV.fetch("DATABASE_HOST") { "db" } %>
+  port: <%= ENV.fetch("DATABASE_PORT") { 5432 } %>
+  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "password" } %>
   database: myapp_test
 
 production:
+  <<: *default
   url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
