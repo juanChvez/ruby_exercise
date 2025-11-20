@@ -42,10 +42,10 @@ END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM activities WHERE record_type = 'Task' AND record_id = 1) THEN
-    INSERT INTO activities (record_type, record_id, action)
+    INSERT INTO activities (record_type, record_id, user_id, action, details)
     VALUES
-      ('Task', 1, 'created'),
-      ('Task', 2, 'assigned'),
-      ('Task', 3, 'updated');
+      ('Task', 1, 1, 'created', '{"note": "Initial setup"}'),
+      ('Task', 2, 2, 'assigned', '{"assigned_to": 2}'),
+      ('Task', 3, 1, 'updated', '{"field": "status"}');
   END IF;
 END$$;

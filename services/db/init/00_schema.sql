@@ -36,8 +36,11 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 CREATE TABLE IF NOT EXISTS activities (
     id SERIAL PRIMARY KEY,
-    record_type VARCHAR(50),
-    record_id INTEGER,
-    action VARCHAR(50),
-    created_at TIMESTAMP DEFAULT NOW()
+    record_type VARCHAR(50) NOT NULL,
+    record_id INTEGER NOT NULL,
+    user_id INTEGER,
+    action VARCHAR(50) NOT NULL,
+    details JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
