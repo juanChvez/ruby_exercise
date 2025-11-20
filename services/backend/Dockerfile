@@ -35,7 +35,7 @@ RUN apt-get update -qq && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
-RUN groupadd -r rails && useradd -r -g rails rails
+RUN groupadd -r rails && useradd -r -g rails -m -d /home/rails rails
 
 # App directory
 WORKDIR /app
