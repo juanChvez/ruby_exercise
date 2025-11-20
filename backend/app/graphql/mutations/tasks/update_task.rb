@@ -4,26 +4,18 @@ module Mutations
       description "Updates an existing task within a user's project. Returns the updated task or errors if the update fails."
       include Mixins::Authorization
 
-      argument :id, ID, required: true
-      argument :title, String, required: false
-      argument :description, String, required: false
-      argument :status, String, required: false
-      argument :assignee_type, String, required: false
-      argument :assignee_id, ID, required: false
+      argument :input, Types::Tasks::UpdateTaskInput, required: true
 
-      field :task, Types::Tasks::TaskType, null: true
+      field :task, Types::Tasks::TaskItemType, null: true
       field :errors, [String], null: false
 
-      def resolve(id:, **args)
-        user = require_admin!(context)
+      def resolve(input:)
+        require_authentication!(context)
 
-        task = Task.joins(project: :user)
-          .where(projects: {user_id: user.id})
-          .find_by(id: id)
-
+        task = Task.find(input[:id])
         return {task: nil, errors: ["Task not found"]} unless task
 
-        if task.update(args.compact)
+        if task.update(input.to_h.except(:id))
           {task: task, errors: []}
         else
           {task: nil, errors: task.errors.full_messages}

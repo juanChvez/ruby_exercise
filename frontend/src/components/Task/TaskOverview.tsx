@@ -1,6 +1,6 @@
 import React, { useState, useEffect, type JSX } from "react";
 import { useParams } from "react-router-dom";
-import { type TaskDetails } from "../../types/Task";
+import { type TaskDetails, type UpdateTask } from "../../types/Task";
 import { getStatusLabel } from "./TaskCard";
 //import ActivityCard from "./ActivityCard";
 import ModalEdit from "./ModalEdit";
@@ -33,18 +33,14 @@ const TaskOverview: React.FC = (): JSX.Element => {
    * @function
    * @returns {void}
    */
-  const handleEditClick = (): void => {
-    setShowEditModal(true);
-  };
+  const handleEditClick = (): void => setShowEditModal(true);
 
   /**
    * Closes the edit modal dialog.
    * @function
    * @returns {void}
    */
-  const handleEditClose = (): void => {
-    setShowEditModal(false);
-  };
+  const handleEditClose = (): void => setShowEditModal(false);
 
   /**
    * Updates the task details after editing and saves the update.
@@ -52,8 +48,25 @@ const TaskOverview: React.FC = (): JSX.Element => {
    * @param {Task} updatedTask - The updated task data.
    * @returns {void}
    */
-  const handleEditSave = (updatedTask: TaskDetails): void => {
-    setTaskDetails(updatedTask);
+  const handleEditSave = async (updatedTask: UpdateTask): Promise<void> => {
+    setLoading(true);
+    setMessage("Saving changes...");
+    try {
+      const updated = await tasksService.updateTask(updatedTask);
+      if (updated) {
+        setTaskDetails((prev) => ({
+          ...prev!,
+          ...updated,
+        }));
+        setMessage("Task updated successfully.");
+      } else {
+        setMessage("Failed to update task.");
+      }
+    } catch (error) {
+      setMessage("Failed to update task.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Function to fetch single task info using tasksService
@@ -87,7 +100,7 @@ const TaskOverview: React.FC = (): JSX.Element => {
       </p>
       {/* Task Title and Edit Button */}
       <div className="uk-flex uk-flex-middle uk-flex-between">
-        <h2 className="uk-margin-remove-top">{taskDetails?.projectTitle}</h2>
+        <h2 className="uk-margin-remove-top">{taskDetails?.title}</h2>
         <button
           className="uk-button uk-background-secondary uk-button-small"
           type="button"

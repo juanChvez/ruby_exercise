@@ -57,7 +57,7 @@ export type TaskActivity = {
  * Detailed information about a task, typically for full task view or modal.
  * @typedef {Object} TaskDetails
  * @property {string} projectTitle - The title of the project this task belongs to.
- * @property {string} taskTitle - The full title of the task.
+ * @property {string} title - The full title of the task.
  * @property {string} description - Detailed description of the task.
  * @property {TaskStatus} status - Current status of the task.
  * @property {string} assigned - Name of the person assigned to the task.
@@ -65,7 +65,7 @@ export type TaskActivity = {
  */
 export type TaskDetails = {
   projectTitle: string;
-  taskTitle: string;
+  title: string;
   description: string;
   status: TaskStatus;
   assigned: string;
@@ -86,5 +86,22 @@ export type NewTask = {
   description: string;
   projectId: string | number;
   assigneeType: string;
+  assigneeId: string | number;
+};
+
+/**
+ * Represents the payload for updating an existing task.
+ * @typedef {Object} UpdateTask
+ * @property {string} title - New title of the task.
+ * @property {string} description - Updated description of the task.
+ * @property {string|number} projectId - ID of the related project.
+ * @property {string|number} assigneeId - ID of the new assignee.
+ */
+
+export type UpdateTask = {
+  id: number;
+  title: string;
+  description: string;
+  status: TaskStatus;
   assigneeId: string | number;
 };

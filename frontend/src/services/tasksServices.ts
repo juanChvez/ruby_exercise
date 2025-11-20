@@ -1,7 +1,7 @@
 import client from "../apollo";
 import { GET_TASK_LIST, GET_TASK } from "../graphql/queries/tasks";
-import { CREATE_TASK } from "../graphql/mutations/tasks";
-import type { Task, TaskDetails, NewTask } from "../types/Task";
+import { CREATE_TASK, UPDATE_TASK } from "../graphql/mutations/tasks";
+import type { Task, TaskDetails, NewTask, UpdateTask } from "../types/Task";
 
 /**
  * Service for managing task-related API operations.
@@ -65,6 +65,26 @@ export const tasksService = {
       return data?.createTask?.task ?? null;
     } catch (error) {
       console.error("Failed to create task:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Updates an existing task using the GraphQL mutation.
+   *
+   * @param {object} updateInput - The input object with task fields to update. Must contain the task id.
+   * @returns {Promise<Task | null>} The updated task, or null if update failed.
+   * @throws {Error} If unable to update the task.
+   */
+  updateTask: async (updateInput: UpdateTask): Promise<Task | null> => {
+    try {
+      const { data } = await client.mutate<{ updateTask: { task: Task } }>({
+        mutation: UPDATE_TASK,
+        variables: { input: updateInput },
+      });
+      return data?.updateTask?.task ?? null;
+    } catch (error) {
+      console.error("Failed to update task:", error);
       throw error;
     }
   },

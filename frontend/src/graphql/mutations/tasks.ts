@@ -30,3 +30,21 @@ export const CREATE_TASK = gql`
     }
   }
 `;
+
+/**
+ * GraphQL mutation to update an existing task.
+ * Returns updated task fields and potential errors.
+ */
+export const UPDATE_TASK = gql`
+  mutation UpdateTask($input: UpdateTaskInput!) {
+    updateTask(input: $input) {
+      task {
+        title
+        description
+        status
+        assigned
+      }
+      errors
+    }
+  }
+`;

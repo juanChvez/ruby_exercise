@@ -1,22 +1,29 @@
-import React, { useState, type JSX } from "react";
-import { type TaskDetails, type TaskStatus } from "../../types/Task";
+import React, { useState, useEffect, type JSX } from "react";
+import { useParams } from "react-router-dom";
+import {
+  type TaskDetails,
+  type TaskStatus,
+  type UpdateTask,
+} from "../../types/Task";
+import { type UserSelectItem } from "../../types/User";
+import { userService } from "../../services";
 
 /**
  * Props for the ModalEdit component.
- * @typedef {Object} ModalEditProps
+ * @interface ModalEditProps
  * @property {boolean} show - Whether to show the modal dialog.
  * @property {() => void} onClose - Callback when modal is closed.
  * @property {TaskDetails} task - The currently selected task for editing.
- * @property {(updatedTask: TaskDetails) => void} onSave - Callback when a task is saved.
+ * @property {(updatedTask: UpdateTask) => void} onSave - Callback when a task is saved.
  */
 interface ModalEditProps {
   show: boolean;
   onClose: () => void;
   task: TaskDetails;
-  onSave: (updatedTask: TaskDetails) => void;
+  onSave: (updatedTask: UpdateTask) => void;
 }
 
-/** 
+/**
  * Array of valid status options for a task.
  * @type {TaskStatus[]}
  */
@@ -38,27 +45,66 @@ const ModalEdit: React.FC<ModalEditProps> = ({
   /**
    * Local state for the editable fields: title, description, status, assignee.
    */
-  const [taskTitle, setTaskTitle] = useState<string>(task?.taskTitle);
-  const [description, setDescription] = useState<string>(task?.description);
-  const [status, setStatus] = useState<TaskStatus>(task?.status);
-  const [assignee, setAssignee] = useState<string>(task?.assigned);
+  const [taskTitle, setTaskTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [status, setStatus] = useState<TaskStatus>("TODO");
+  const [assignee, setAssignee] = useState<string>("");
+  const [users, setUsers] = useState<UserSelectItem[]>([]);
+  const { id: taskIdParam } = useParams<{ id: string }>();
+  const taskId = taskIdParam ? parseInt(taskIdParam, 10) : null;
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  useEffect(() => {
+    if (show) {
+      setTaskTitle(task?.title || "");
+      setDescription(task?.description || "");
+      setStatus(task?.status || "");
+      // Find user whose name matches task.assigned and set their id as assignee
+      const assignedUser = users.find((user) => user.name === task?.assigned);
+      setAssignee(assignedUser ? assignedUser.id.toString() : "");
+    }
+    // eslint-disable-next-line
+  }, [show]);
 
   /**
-   * Handle saving the updated task.
+   * Handles saving the updated task.
    *
    * @param {React.FormEvent} e - The form submission event.
+   * @returns {void}
    */
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedTask: TaskDetails = {
-      ...task,
-      taskTitle,
+    const updatedTask: UpdateTask = {
+      id: taskId as number,
+      title: taskTitle,
       description,
       status,
-      assigned: assignee,
+      assigneeId: assignee,
     };
     onSave(updatedTask);
     onClose();
+  };
+
+  /**
+   * Asynchronously fetches the list of users for selection and updates state.
+   *
+   * Uses the userService to retrieve available users and sets the local state.
+   * Logs errors if the fetch fails and resets the assignee options to an empty array.
+   *
+   * @returns {Promise<void>}
+   */
+  const getUsers = async (): Promise<void> => {
+    try {
+      // Use userService to fetch the list of users for selection
+      const users = await userService.getUsersSelect();
+      setUsers(users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      setUsers([]);
+    }
   };
 
   if (!show) return null;
@@ -124,12 +170,18 @@ const ModalEdit: React.FC<ModalEditProps> = ({
           <div className="uk-margin">
             <label className="uk-form-label">Assignee</label>
             <div className="uk-form-controls">
-              <input
-                className="uk-input"
-                type="text"
+              <select
+                className="uk-select"
                 value={assignee}
                 onChange={(e) => setAssignee(e.target.value)}
-              />
+                required
+              >
+                {users.map((option) => (
+                  <option key={`${option.id}-${option.name}`} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="uk-flex uk-flex-right uk-margin-top">
