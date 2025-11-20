@@ -12,3 +12,17 @@ export const GET_USERS_SELECT = gql`
     }
   }
 `;
+
+// GraphQL query for getting current user's profile with camelCase fields
+export const GET_PROFILE = gql`
+query GetProfileCamelCase {
+  user {
+    id
+    name
+    email
+    createdAt
+    updatedAt
+    level
+  }
+}
+`;

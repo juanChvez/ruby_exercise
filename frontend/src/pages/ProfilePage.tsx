@@ -20,26 +20,23 @@ export default function ProfilePage(): JSX.Element {
   const [isAdmin, setIsAdmin] = useState(false);
   /** Loading and message setter functions from loading context. */
   const { setLoading, setMessage } = useLoading();
-  /** Authentication token from auth context. */
-  const { token } = useAuth();
 
   useEffect(() => {
-    fetchProfile(token as string);
+    fetchProfile();
     // eslint-disable-next-line
   }, []);
 
   /**
    * Fetches user profile data from the server and updates state.
    * @async
-   * @param {string} token - The authentication token for the current user.
    * @returns {Promise<void>}
    */
-  const fetchProfile = async (token: string): Promise<void> => {
+  const fetchProfile = async (): Promise<void> => {
     try {
       setLoading(true);
       setMessage("Loading profile data...");
-      const profileData = await authService.getProfile(token);
-      setIsAdmin(profileData.role === "admin");
+      const profileData = await authService.getProfile();
+      setIsAdmin(profileData.level === "admin");
       setUserData(profileData);
     } catch (err) {
       console.error(err);
@@ -47,23 +44,6 @@ export default function ProfilePage(): JSX.Element {
       setLoading(false);
       setMessage("");
     }
-  };
-
-  /**
-   * Formats a date string into a more readable, locale-friendly format.
-   *
-   * @param {string} dateString - ISO date string to be formatted.
-   * @returns {string} Formatted date string.
-   */
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   /**
@@ -121,7 +101,7 @@ export default function ProfilePage(): JSX.Element {
                 color: isAdmin ? "#fff" : "#333", // muted text
               }}
             >
-              {userData?.role}
+              {userData?.level}
             </span>
           </div>
 
@@ -144,25 +124,6 @@ export default function ProfilePage(): JSX.Element {
               {userData?.email}
             </span>
           </div>
-
-          {/* TODO: validate if this is necessary */}
-          {/* <div className="uk-margin-small-bottom">
-            <span className="uk-text-meta uk-text-muted uk-display-block">
-              Status
-            </span>
-            <span
-              className="uk-label uk-margin-small-top"
-              style={{
-                background: userData?.is_active ? "#dcfce7" : "#fef3c7",
-                color: userData?.is_active ? "#166534" : "#92400e",
-                fontWeight: 500,
-                fontSize: 12,
-              }}
-            >
-              {userData?.is_active ? "Active" : "Inactive"}
-            </span>
-          </div> */}
-
           {/* Account creation info */}
           <div className="uk-margin-small-bottom">
             <span className="uk-text-meta uk-text-muted uk-display-block">
@@ -172,7 +133,7 @@ export default function ProfilePage(): JSX.Element {
               className="uk-display-block"
               style={{ marginTop: 4, color: "#475569", fontSize: 14 }}
             >
-              {userData?.created_at ? formatDate(userData.created_at) : ""}
+              {userData?.createdAt}
             </span>
           </div>
 
@@ -185,7 +146,7 @@ export default function ProfilePage(): JSX.Element {
               className="uk-display-block"
               style={{ marginTop: 4, color: "#475569", fontSize: 14 }}
             >
-              {userData?.updated_at ? formatDate(userData.updated_at) : ""}
+              {userData?.updatedAt}
             </span>
           </div>
         </div>

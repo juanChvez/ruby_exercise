@@ -1,4 +1,7 @@
+import client from "../apollo";
+import { GET_PROFILE } from "../graphql/queries/users";
 import { gql } from '@apollo/client';
+import type { User } from "../types/User";
 
 const REGISTER_MUTATION = gql`
 mutation Register($email: String!, $password: String!, $name: String!, $passwordConfirmation: String!) {
@@ -33,21 +36,28 @@ mutation Login($email: String!, $password: String!) {
 }
 `;
 
-const GET_PROFILE_QUERY = gql`
-query GetProfile {
-  user {
-    id
-    name
-    email
-    level
-    created_at
-    updated_at
-  }
-}
-`;
+
 
 export const authService = {
   REGISTER_MUTATION,
   LOGIN_MUTATION,
-  GET_PROFILE_QUERY,
+
+  /**
+   * Fetch the current user's profile using the Apollo client.
+   * Returns the user object on success, or throws on error.
+   * 
+   * @returns {Promise<User>} Resolved with user data.
+   */
+  getProfile: async (): Promise<User> => {
+    try {
+      const { data } = await client.query<{ user: User }>({
+        query: GET_PROFILE,
+        fetchPolicy: "network-only",
+      });
+      return data?.user!;
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      throw error;
+    }
+  },
 };

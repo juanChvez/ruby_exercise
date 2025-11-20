@@ -1,9 +1,10 @@
 module Queries
   module Users
     class FetchUser < BaseQuery
-      type Types::Users::UserType, null: true
       description "Returns the current user if no ID is specified, or the user by ID if provided. Admins can fetch any user by ID. Returns null if unauthorized or not found."
       include Mixins::Authorization
+
+      type Types::Users::UserType, null: true
 
       argument :id, ID, required: false
 

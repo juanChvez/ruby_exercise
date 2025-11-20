@@ -4,16 +4,16 @@
  * @property {string} name - The name of the user.
  * @property {string} email - The user's email address.
  * @property {string} level - The user's access or role level.
- * @property {string} [created_at] - ISO string when the user was created.
- * @property {string} [updated_at] - ISO string when the user was last updated.
+ * @property {string} [createdAt] - ISO string when the user was created.
+ * @property {string} [updatedAt] - ISO string when the user was last updated.
  */
 export interface User {
   id: number;
   name: string;
   email: string;
   level: string;
-  created_at?: string;
-  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
