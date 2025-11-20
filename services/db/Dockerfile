@@ -5,7 +5,7 @@ FROM postgres:15-alpine
 RUN apk add --no-cache postgresql-contrib
 
 # Copy your SQL initialization scripts
-COPY ./init-db/*.sql /docker-entrypoint-initdb.d/
+COPY ./init/*.sql /docker-entrypoint-initdb.d/
 
 # (Optional) create a backup folder
 RUN mkdir -p /data_backup
