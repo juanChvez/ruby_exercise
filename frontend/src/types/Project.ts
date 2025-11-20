@@ -1,4 +1,4 @@
-import { type Task } from "./Task";
+import { type GroupedTasks } from "./Task";
 
 /**
  * Represents a brief summary of a project, suitable for display in a project list.
@@ -24,19 +24,12 @@ export type ProjectListItem = {
  * @property {string} title - The name of the project.
  * @property {string} description - A detailed project description.
  * @property {string} date - Creation or last updated date for the project (ISO or display string).
- * @property {Object} tasks - Categorized tasks in the project.
- * @property {Task[]} tasks.todo - Tasks with "To Do" status.
- * @property {Task[]} tasks.inProgress - Tasks that are currently in progress.
- * @property {Task[]} tasks.done - Tasks that are completed.
+ * @property {GroupedTasks} tasks - Categorized tasks in the project.
  */
 export type Project = {
     id: number;
     title: string;
     description: string;
     date: string;
-    tasks: {
-        todo: Task[];
-        inProgress: Task[];
-        done: Task[];
-    };
+    tasks: GroupedTasks;
 };

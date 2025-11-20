@@ -1,6 +1,21 @@
 import { gql } from "@apollo/client";
 
 /**
+ * This file contains all GraphQL queries and fragments related to projects,
+ * including retrieving project lists, project details, and reusable task fragments.
+ */
+export const TASK_ITEM_FIELDS = gql`
+  fragment TaskItemFields on TaskItem {
+    id
+    title
+    description
+    status
+    date
+    assigned
+  }
+`;
+
+/**
  * GraphQL query to get the list of projects.
  */
 export const PROJECT_LIST = gql`
@@ -16,13 +31,29 @@ export const PROJECT_LIST = gql`
 `;
 
 /**
- * GraphQL query to retrieve the details of a single project by ID.
+ * GraphQL query to retrieve detailed information about a project by its ID,
+ * including its categorized tasks (todo, inProgress, done).
  */
 export const GET_PROJECT = gql`
+  ${TASK_ITEM_FIELDS}
+
   query GetProject($id: ID!) {
     project(id: $id) {
       id
-      name
+      title
+      description
+      date
+      tasks {
+        todo {
+          ...TaskItemFields
+        }
+        inProgress {
+          ...TaskItemFields
+        }
+        done {
+          ...TaskItemFields
+        }
+      }
     }
   }
 `;

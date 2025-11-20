@@ -1,6 +1,10 @@
 import client from "../apollo";
-import { PROJECT_LIST, CREATE_PROJECT } from "../graphql/queries/projects";
-import { type ProjectListItem } from "../types/Project";
+import {
+  PROJECT_LIST,
+  CREATE_PROJECT,
+  GET_PROJECT,
+} from "../graphql/queries/projects";
+import { type ProjectListItem, type Project } from "../types/Project";
 
 /**
  * Service for managing project-related API operations.
@@ -8,7 +12,6 @@ import { type ProjectListItem } from "../types/Project";
  * @namespace projectService
  */
 export const projectService = {
-
   /**
    * Gets a list of projects for the authenticated user.
    *
@@ -17,13 +20,39 @@ export const projectService = {
    */
   getListProjects: async (): Promise<Array<ProjectListItem>> => {
     try {
-      const { data } = await client.query<{ projects: Array<ProjectListItem> }>({
-        query: PROJECT_LIST,
-        fetchPolicy: "network-only",
-      });
+      const { data } = await client.query<{ projects: Array<ProjectListItem> }>(
+        {
+          query: PROJECT_LIST,
+          fetchPolicy: "network-only",
+        }
+      );
       return data?.projects ?? [];
     } catch (error) {
       console.error("Failed to get project list:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Gets detailed information about a single project by its ID using clent graphql.
+   *
+   * @param {number | string} id - The unique identifier of the project.
+   * @returns {Promise<Project>} The detailed project data.
+   * @throws {Error} If unable to retrieve the project.
+   */
+  getProject: async (id: number | string): Promise<Project> => {
+    try {
+      const { data } = await client.query<{ project: Project }>({
+        query: GET_PROJECT,
+        variables: { id },
+        fetchPolicy: "network-only",
+      });
+      if (!data?.project) {
+        throw new Error("Project not found");
+      }
+      return data.project;
+    } catch (error) {
+      console.error("Failed to get project:", error);
       throw error;
     }
   },
@@ -51,11 +80,12 @@ export const projectService = {
         mutation: CREATE_PROJECT,
         variables: { name, description },
       });
-      return data?.createProject ?? { project: null, errors: ["Unknown error"] };
+      return (
+        data?.createProject ?? { project: null, errors: ["Unknown error"] }
+      );
     } catch (error) {
       console.error("Failed to create project:", error);
       throw error;
     }
   },
-
 };

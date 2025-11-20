@@ -18,6 +18,21 @@ export type Task = {
 };
 
 /**
+ * Represents grouped tasks by their status for a project.
+ * `todo`: List of tasks with status "TODO"
+ * `inProgress`: List of tasks with status "IN_PROGRESS"
+ * `done`: List of tasks with status "DONE"
+ * @property {Task[]} todo - Tasks with status "TODO".
+ * @property {Task[]} inProgress - Tasks with status "IN_PROGRESS".
+ * @property {Task[]} done - Tasks with status "DONE".
+ */
+export type GroupedTasks = {
+    todo: Task[];
+    inProgress: Task[];
+    done: Task[];
+  };
+
+/**
  * The allowed status values for a task.
  * @typedef {"TODO" | "IN_PROGRESS" | "DONE"} TaskStatus
  */
