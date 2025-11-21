@@ -11,7 +11,7 @@ module Queries
         user = require_authentication!(context)
 
         if user.level_admin?
-          tasks = Task.all
+          tasks = Task.joins(:project).where(projects: { user_id: user.id })
           tasks = tasks.where(project_id: project_id) if project_id.present?
         else
           tasks = if project_id.present?
